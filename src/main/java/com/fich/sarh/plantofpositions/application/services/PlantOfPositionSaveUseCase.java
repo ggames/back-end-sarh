@@ -19,4 +19,8 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveServicePor
 
         return savePort.savePlantOfPosition(plantposition);
     }
+
+    public PlantOfPosition registerMovement() {
+        return null;
+    }
 }

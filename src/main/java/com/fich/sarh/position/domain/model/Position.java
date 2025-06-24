@@ -25,10 +25,22 @@ public class Position {
     OrganizationalUnit organizationalUnitID;
     StatusOfPositions positionStatus;
     Position newPosition;
-    List<Position> originPosition;
+  //  List<Position> originPosition;
     Long pointsAvailable;
     Transformation creationResolutionID;
     Transformation resolutionSuppressionID;
 
-
+    @Override
+    public String toString() {
+        return "Position{" +
+                "pointID=" + pointID +
+                ", organizationalUnitID=" + organizationalUnitID +
+                ", positionStatus=" + positionStatus +
+                ", newPosition=" + newPosition +
+              //  ", originPosition=" + originPosition +
+                ", pointsAvailable=" + pointsAvailable +
+                ", creationResolutionID=" + creationResolutionID +
+                ", resolutionSuppressionID=" + resolutionSuppressionID +
+                '}';
+    }
 }

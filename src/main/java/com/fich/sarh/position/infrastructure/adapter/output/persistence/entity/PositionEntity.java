@@ -42,7 +42,7 @@ public class PositionEntity {
     @JoinColumn(name = "cargo_generado", referencedColumnName = "id")
     PositionEntity newPosition;
 
-    @OneToMany(mappedBy = "newPosition", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "newPosition", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     List<PositionEntity> originPosition;
 
     @Column(name = "puntos_disp")

@@ -27,7 +27,7 @@ public class OrganizationalUnitPersistenceAdapter implements OrganizationalUnitL
         return organizationalRepository.findById(id)
                 .map(organizational ->
                         OrganizationalUnitMapper.
-                                INSTANCE.OrganizationalUnitEntityToOrganizationalUnit(organizational)
+                                INSTANCE.toDto(organizational)
                 );
     }
 
@@ -35,14 +35,14 @@ public class OrganizationalUnitPersistenceAdapter implements OrganizationalUnitL
     public List<OrganizationalUnit> findAllOrganizationalUnit() {
         return organizationalRepository.findAll().stream()
                 .map(organizational ->
-                        OrganizationalUnitMapper.INSTANCE.OrganizationalUnitEntityToOrganizationalUnit(organizational))
+                        OrganizationalUnitMapper.INSTANCE.toDto(organizational))
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<OrganizationalUnit> findById(Long id) {
         return organizationalRepository.findById(id).map(
-                organizational -> OrganizationalUnitMapper.INSTANCE.OrganizationalUnitEntityToOrganizationalUnit(organizational)
+                organizational -> OrganizationalUnitMapper.INSTANCE.toDto(organizational)
         );
     }
 
@@ -55,8 +55,8 @@ public class OrganizationalUnitPersistenceAdapter implements OrganizationalUnitL
     @Override
     public OrganizationalUnit saveOrganizationalUnit(OrganizationalUnit unit) {
         return
-                OrganizationalUnitMapper.INSTANCE.OrganizationalUnitEntityToOrganizationalUnit(
-                        organizationalRepository.save(OrganizationalUnitMapper.INSTANCE.OrganizationalUnitToOrganizationalUnitEntity(unit))
+                OrganizationalUnitMapper.INSTANCE.toDto(
+                        organizationalRepository.save(OrganizationalUnitMapper.INSTANCE.toEntity(unit))
                 );
 
     }

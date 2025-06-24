@@ -92,7 +92,7 @@ public class PlantOfPositionController {
                 logger.info(position.get().getPositionStatus() + " ");
                if(!position.isEmpty()){
                    Position positionUpdated = position.get();
-                   positionUpdated.setPositionStatus(StatusOfPositions.VACANTE_DEFINITIVA);
+                   positionUpdated.setPositionStatus(StatusOfPositions.SUPRIMIDO);
                    positionUpdate.updatePosition(position.get().getId(), positionUpdated);
                }
            }

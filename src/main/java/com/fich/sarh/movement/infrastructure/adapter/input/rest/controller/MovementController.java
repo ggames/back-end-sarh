@@ -32,7 +32,7 @@ public class MovementController {
         this.updateMovementService = updateMovementService;
     }
     @GetMapping("all")
-    @PreAuthorize("hasRole('INVITED')")
+    @PreAuthorize("hasRole('USER')")
     public List<MovementResponse> findAll(){
         return MovementRestMapper.INSTANCE.toMovementList(retrieveMovementService.getAllMovements());
     }

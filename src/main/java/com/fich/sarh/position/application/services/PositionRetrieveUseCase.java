@@ -5,6 +5,7 @@ import com.fich.sarh.common.UseCase;
 import com.fich.sarh.position.application.ports.entrypoint.api.PositionRetrieveServicePort;
 import com.fich.sarh.position.application.ports.persistence.PositionRetrievePort;
 import com.fich.sarh.position.domain.model.Position;
+import com.fich.sarh.position.domain.model.PositionDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class PositionRetrieveUseCase implements PositionRetrieveServicePort {
     }
 
     @Override
-    public List<Position> getAllPositions() {
+    public List<PositionDto> getAllPositions() {
 
         return positionRetrievePort.findAllPositions();
     }
@@ -31,7 +32,8 @@ public class PositionRetrieveUseCase implements PositionRetrieveServicePort {
     }
 
     @Override
-    public List<Position> findAvailablePosition(StatusOfPositions status) {
-        return null;
+    public List<Position> findAvailablePosition(StatusOfPositions status)
+    {
+        return positionRetrievePort.findAvailablePosition(StatusOfPositions.SUPRIMIDO);
     }
 }

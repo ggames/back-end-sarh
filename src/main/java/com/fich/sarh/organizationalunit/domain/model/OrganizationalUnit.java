@@ -26,4 +26,13 @@ public class OrganizationalUnit {
    // List<OrganizationalSubUnit> subunitList;
 
 
+    @Override
+    public String toString() {
+        return "OrganizationalUnit{" +
+                "id=" + id +
+                ", nameUnit='" + nameUnit + '\'' +
+                ", director='" + director + '\'' +
+                ", viceDirector='" + viceDirector + '\'' +
+                '}';
+    }
 }

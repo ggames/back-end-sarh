@@ -16,4 +16,13 @@ public class Transformation {
     String resolutionNumber;
 
     Float result;
+
+    @Override
+    public String toString() {
+        return "Transformation{" +
+                "id=" + id +
+                ", resolutionNumber='" + resolutionNumber + '\'' +
+                ", result=" + result +
+                '}';
+    }
 }

@@ -31,4 +31,9 @@ public class TransformationRetrieveService implements TransformationRetrieveServ
     public Optional<Transformation> findByResolutionNumber(String resolutionNumber) {
         return transformationRetrievePort.findByResolutionNumber(resolutionNumber);
     }
+
+    @Override
+    public Optional<Transformation> findFirstByOrderDesc() {
+        return transformationRetrievePort.findFirstByOrderDesc();
+    }
 }

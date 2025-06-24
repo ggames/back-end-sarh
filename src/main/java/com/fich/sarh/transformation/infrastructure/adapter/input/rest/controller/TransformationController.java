@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @WebAdapter
 @RestController
-@RequestMapping("transformation/")
+@RequestMapping("/transformation")
 public class TransformationController {
 
     Logger logger = LoggerFactory.getLogger(TransformationController.
@@ -36,7 +37,8 @@ public class TransformationController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<TransformationResponse> save(@RequestBody TransformationRequest request){
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<TransformationResponse> save(@RequestBody TransformationRequest request) {
 
         logger.error("VALOR DE LA TRANSFORMACION", request.getResolutionNumber(), request.getResult());
 
@@ -50,11 +52,18 @@ public class TransformationController {
     }
 
     @GetMapping("all")
-    public List<TransformationResponse> getAll(){
+    @PreAuthorize("hasRole('USER')")
+    public List<TransformationResponse> getAll() {
 
         return transformationRetrieveServicePort
                 .getAllTransformations().stream().map(
-                TransformationRestMapper.INSTANCE::toTransformationResponse
-        ).collect(Collectors.toList());
+                        TransformationRestMapper.INSTANCE::toTransformationResponse
+                ).collect(Collectors.toList());
+    }
+
+    @GetMapping("last")
+    @PreAuthorize("hasRole('USER')")
+    public TransformationResponse getTransformationLast() {
+        return TransformationRestMapper.INSTANCE.toTransformationResponse(transformationRetrieveServicePort.findFirstByOrderDesc().get());
     }
 }

@@ -13,12 +13,12 @@ import java.util.Date;
 @Builder
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Movement {
 
-    Long id;
+    Long plantId;
+
+    Long positionId;
 
     Date movementDate;
 

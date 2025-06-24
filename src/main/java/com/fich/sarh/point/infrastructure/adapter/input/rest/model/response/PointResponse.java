@@ -14,6 +14,8 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PointResponse {
 
+    Long id;
+
     Long positionCode;
 
     String namePosition;

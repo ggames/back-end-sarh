@@ -7,14 +7,9 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TransformationMapper {
-
     TransformationMapper INSTANCE = Mappers.getMapper(TransformationMapper.class);
-
-    Transformation toTransformation(TransformationEntity entity);
-
-    TransformationEntity toTransformationEntity(Transformation transformation);
-
-
+    Transformation toDto(TransformationEntity entity);
+    TransformationEntity toEntity(Transformation dto);
 }

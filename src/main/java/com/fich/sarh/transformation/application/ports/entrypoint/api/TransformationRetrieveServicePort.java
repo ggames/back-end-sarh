@@ -12,4 +12,6 @@ public interface TransformationRetrieveServicePort {
     Optional<Transformation> findById(Long id);
 
     Optional<Transformation> findByResolutionNumber(String resolutionNumber);
+
+    Optional<Transformation> findFirstByOrderDesc();
 }

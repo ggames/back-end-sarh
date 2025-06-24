@@ -24,4 +24,15 @@ public class Point {
     Long amountPoint;
 
     Date date;
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "id=" + id +
+                ", positionCode=" + positionCode +
+                ", namePosition='" + namePosition + '\'' +
+                ", dedication='" + dedication + '\'' +
+                ", amountPoint=" + amountPoint +
+                '}';
+    }
 }

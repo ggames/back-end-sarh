@@ -4,6 +4,7 @@ import com.fich.sarh.agent.domain.model.Agent;
 import com.fich.sarh.common.CharacterPlant;
 import com.fich.sarh.common.PlantStatus;
 import com.fich.sarh.point.domain.model.Point;
+import com.fich.sarh.position.domain.model.Position;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlantOfPositionResponse {
 
-    Point pointID;
+    Position positionID;
 
     Agent agentID;
 

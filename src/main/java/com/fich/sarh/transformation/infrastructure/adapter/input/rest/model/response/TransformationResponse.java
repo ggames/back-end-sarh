@@ -11,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TransformationResponse {
 
+    Long id;
+
     String resolutionNumber;
 
     Float result;

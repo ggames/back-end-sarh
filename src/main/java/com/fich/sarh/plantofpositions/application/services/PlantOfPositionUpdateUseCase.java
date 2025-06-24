@@ -24,7 +24,7 @@ public class PlantOfPositionUpdateUseCase implements PlantOfPositionUpdateServic
         return retrievePort.findById(id).map(
                 plantposition -> {
                        plantposition.setAgentID(command.getAgentID());
-                       plantposition.setPointID(command.getPointID());
+                       plantposition.setPositionID(command.getPositionID());
                        plantposition.setCharacterplantID(command.getCharacterplantID());
                        plantposition.setCurrentStatusID(command.getCurrentStatusID());
 

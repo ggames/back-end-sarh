@@ -71,7 +71,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
-                    http.requestMatchers("/auth/log-in").permitAll();
+                    http.requestMatchers("/auth/log-in", "/position/all").permitAll();
+                    //http.requestMatchers("**").permitAll();
                     http.anyRequest().authenticated();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)

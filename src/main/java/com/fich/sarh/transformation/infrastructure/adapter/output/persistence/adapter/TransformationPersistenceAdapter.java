@@ -26,34 +26,39 @@ public class TransformationPersistenceAdapter implements
     @Override
     public Optional<Transformation> loadTransformation(Long id) {
         return transformationRepository.findById(id).map(
-                TransformationMapper.INSTANCE::toTransformation);
+                TransformationMapper.INSTANCE::toDto);
     }
 
     @Override
     public List<Transformation> findAll() {
         return transformationRepository.findAll().stream()
-                .map( TransformationMapper.INSTANCE::toTransformation)
+                .map( TransformationMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Transformation> findById(Long id) {
         return transformationRepository.findById(id).map(
-                TransformationMapper.INSTANCE::toTransformation
+                TransformationMapper.INSTANCE::toDto
         );
     }
 
     @Override
     public Optional<Transformation>  findByResolutionNumber(String resolution) {
         return  transformationRepository.findByResolutionNumber(resolution).map(
-                TransformationMapper.INSTANCE::toTransformation
+                TransformationMapper.INSTANCE::toDto
         );
     }
 
     @Override
+    public Optional<Transformation> findFirstByOrderDesc() {
+        return transformationRepository.findFirstByOrderByIdDesc().map(TransformationMapper.INSTANCE::toDto);
+    }
+
+    @Override
     public Transformation saveTransformation(Transformation transformation) {
-        return TransformationMapper.INSTANCE.toTransformation(transformationRepository.save(
-                TransformationMapper.INSTANCE.toTransformationEntity(transformation)
+        return TransformationMapper.INSTANCE.toDto(transformationRepository.save(
+                TransformationMapper.INSTANCE.toEntity(transformation)
         ));
 
     }

@@ -9,6 +9,7 @@ import com.fich.sarh.organizationalunit.infrastructure.adapter.input.rest.model.
 import com.fich.sarh.organizationalunit.infrastructure.adapter.input.rest.mapper.OrganizationalUnitRestMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,23 +36,26 @@ public class OrganizationalUnitController {
 
 
     @GetMapping("all")
+    @PreAuthorize("hasRole('USER')")
     public List<OrganizationalUnitResponse> findAll(){
         return  OrganizationalUnitRestMapper.INSTANCE.toOrganizationalUnitResponseList(retrieveService.getAllOrganizationalUnits());
     }
 
     @PostMapping("create")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<OrganizationalUnitResponse> save(@RequestBody OrganizationalUnitRequest request){
         return  ResponseEntity.status(HttpStatus.CREATED).body(OrganizationalUnitRestMapper.INSTANCE
-                .OrganizationalUnitToOrganizationalUnitResponse(
-                        saveService.saveOrganizationUnit(OrganizationalUnitRestMapper.INSTANCE.OrganizationalUnitRequestToOrganizationalUnit(request))
+                .toOrganizationalUnitResponse(
+                        saveService.saveOrganizationUnit(OrganizationalUnitRestMapper.INSTANCE.toOrganizationalUnit(request))
                 ));
     }
 
     @PutMapping("update/{id}")
+    @PreAuthorize("hasRole('USER')")
     public OrganizationalUnitResponse update(@PathVariable Long id, @RequestBody OrganizationalUnitRequest request){
 
-        return restMapper.OrganizationalUnitToOrganizationalUnitResponse(updateService.updateOrganizationUnit(id,
-                restMapper.OrganizationalUnitRequestToOrganizationalUnit(request)
+        return restMapper.toOrganizationalUnitResponse(updateService.updateOrganizationUnit(id,
+                restMapper.toOrganizationalUnit(request)
         ));
     }
 }

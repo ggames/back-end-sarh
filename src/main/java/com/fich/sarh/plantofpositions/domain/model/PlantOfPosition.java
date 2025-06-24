@@ -4,6 +4,7 @@ import com.fich.sarh.agent.domain.model.Agent;
 import com.fich.sarh.common.CharacterPlant;
 import com.fich.sarh.common.PlantStatus;
 import com.fich.sarh.point.domain.model.Point;
+import com.fich.sarh.position.domain.model.Position;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,7 +18,7 @@ public class PlantOfPosition {
 
     Long id;
 
-    Point pointID;
+    Position positionID;
 
     Agent agentID;
 

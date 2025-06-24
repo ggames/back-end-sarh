@@ -5,6 +5,7 @@ import com.fich.sarh.agent.infrastructure.adapter.output.persistence.entity.Agen
 import com.fich.sarh.common.CharacterPlant;
 import com.fich.sarh.common.PlantStatus;
 import com.fich.sarh.point.infrastructure.adapter.output.persistence.entity.PointEntity;
+import com.fich.sarh.position.infrastructure.adapter.output.persistence.entity.PositionEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,8 +27,8 @@ public class PlantOfPositionEntity {
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "punto_id")
-    PointEntity pointID;
+    @JoinColumn(name = "cargo_id")
+    PositionEntity positionID;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agente_id")

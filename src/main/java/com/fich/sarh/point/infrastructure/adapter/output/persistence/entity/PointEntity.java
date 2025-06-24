@@ -4,19 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 
 @Builder
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "Puntos")
 public class PointEntity {
+
 
   //  private static final long serialVersionUID = 1L;
 

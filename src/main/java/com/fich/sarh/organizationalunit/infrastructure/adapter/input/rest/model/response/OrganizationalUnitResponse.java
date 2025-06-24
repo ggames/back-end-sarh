@@ -15,6 +15,8 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrganizationalUnitResponse {
 
+    Long id;
+
     String nameUnit;
 
     String director;

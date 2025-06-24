@@ -9,4 +9,6 @@ public interface TransformationRepository extends JpaRepository<TransformationEn
 
     Optional<TransformationEntity>  findByResolutionNumber(String resolution);
 
+    Optional<TransformationEntity> findFirstByOrderByIdDesc();
+
 }

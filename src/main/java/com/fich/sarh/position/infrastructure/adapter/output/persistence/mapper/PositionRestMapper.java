@@ -1,4 +1,4 @@
-package com.fich.sarh.position.infrastructure.adapter.input.rest.mapper;
+package com.fich.sarh.position.infrastructure.adapter.output.persistence.mapper;
 
 import com.fich.sarh.position.domain.model.Position;
 import com.fich.sarh.position.infrastructure.adapter.input.rest.model.request.PositionRequest;
@@ -20,7 +20,7 @@ public interface PositionRestMapper {
     Position toPosition(PositionRequest request);
 
 
-    List<PositionResponse> toPositionResponse(List<Position> positionList);
+    List<PositionResponse> toPositionResponseList(List<Position> positionList);
 
 
 }

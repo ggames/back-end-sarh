@@ -14,9 +14,9 @@ public interface OrganizationalUnitRestMapper {
 
       OrganizationalUnitRestMapper INSTANCE = Mappers.getMapper(OrganizationalUnitRestMapper.class);
 
-      OrganizationalUnit OrganizationalUnitRequestToOrganizationalUnit(OrganizationalUnitRequest request);
+      OrganizationalUnit toOrganizationalUnit(OrganizationalUnitRequest request);
 
-      OrganizationalUnitResponse OrganizationalUnitToOrganizationalUnitResponse(OrganizationalUnit organizational);
+      OrganizationalUnitResponse toOrganizationalUnitResponse(OrganizationalUnit organizational);
 
       List<OrganizationalUnitResponse> toOrganizationalUnitResponseList(List<OrganizationalUnit> organizationalUnitList);
 }

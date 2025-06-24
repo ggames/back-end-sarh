@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Builder
@@ -30,15 +31,9 @@ public class PlantHistoryEntity {
     @Column(name = "estado_planta")
     PlantStatus plantStatus;
 
-    @Column(name = "resolucion_inicio")
-    String startResolution;
+    @Column(name = "fecha_desde")
+    LocalDate dateFrom;
 
-    @Column(name = "fecha_inicio")
-    Date startDate;
-
-    @Column(name = "resolucion_final")
-    String endResolution;
-
-    @Column(name = "fecha_fin")
-    Date endDate;
+    @Column(name = "fecha_hasta")
+    LocalDate dateTo;
 }

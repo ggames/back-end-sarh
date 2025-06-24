@@ -5,6 +5,7 @@ import com.fich.sarh.plantofpositions.domain.model.PlantOfPosition;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Builder
@@ -21,11 +22,7 @@ public class PlantHistoryRequest {
 
     PlantStatus plantStatus;
 
-    String startResolution;
+    LocalDate dateFrom;
 
-    Date startDate;
-
-    String endResolution;
-
-    Date endDate;
+    LocalDate dateTo;
 }

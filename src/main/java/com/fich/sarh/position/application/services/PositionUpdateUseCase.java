@@ -59,6 +59,7 @@ public class PositionUpdateUseCase implements PositionUpdateServicePort {
 
         position.setPointsAvailable(command.getPointsAvailable());
         position.setNewPosition(command.getNewPosition());
+        position.setResolutionSuppressionID(command.getResolutionSuppressionID());
         return positionSavePort.savePosition(position);
     }
 
