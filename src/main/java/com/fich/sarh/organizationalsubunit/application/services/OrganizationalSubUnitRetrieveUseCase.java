@@ -4,6 +4,7 @@ import com.fich.sarh.common.UseCase;
 import com.fich.sarh.organizationalsubunit.application.ports.entrypoint.api.OrganizationalSubUnitRetrieveServicePort;
 import com.fich.sarh.organizationalsubunit.application.ports.persistence.OrganizationalSubUnitRetrievePort;
 import com.fich.sarh.organizationalsubunit.domain.model.OrganizationalSubUnit;
+import com.fich.sarh.organizationalsubunit.domain.model.OrganizationalSubUnitDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,12 @@ public class OrganizationalSubUnitRetrieveUseCase implements OrganizationalSubUn
         this.subunitRetrieve = subunitRetrieve;
     }
 
+
+    @Override
+    public List<OrganizationalSubUnitDTO> getAllOrganizationalSubUnitDTOs() {
+
+        return subunitRetrieve.findAllOrganizationalSubUnitDTO();
+    }
 
     @Override
     public List<OrganizationalSubUnit> getAllOrganizationalSubUnits() {

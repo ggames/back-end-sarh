@@ -1,11 +1,8 @@
 package com.fich.sarh.organizationalunit.domain.model;
 
-import com.fich.sarh.organizationalsubunit.adapter.output.persistence.entity.OrganizationalSubUnitEntity;
-import com.fich.sarh.organizationalsubunit.domain.model.OrganizationalSubUnit;
+import com.fich.sarh.agent.domain.model.Agent;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Builder
 @Getter
@@ -19,9 +16,9 @@ public class OrganizationalUnit {
 
     String nameUnit;
 
-    String director;
+    Agent director;
 
-    String viceDirector;
+    Agent viceDirector;
 
    // List<OrganizationalSubUnit> subunitList;
 
@@ -31,8 +28,8 @@ public class OrganizationalUnit {
         return "OrganizationalUnit{" +
                 "id=" + id +
                 ", nameUnit='" + nameUnit + '\'' +
-                ", director='" + director + '\'' +
-                ", viceDirector='" + viceDirector + '\'' +
+                ", director=" + director +
+                ", viceDirector=" + viceDirector +
                 '}';
     }
 }

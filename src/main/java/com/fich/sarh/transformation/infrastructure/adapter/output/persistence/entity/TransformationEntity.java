@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Builder
 @Getter
 @Setter
@@ -19,7 +21,9 @@ public class TransformationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    LocalDate date;
+
     String resolutionNumber;
 
-    Float result;
+    String reason;
 }

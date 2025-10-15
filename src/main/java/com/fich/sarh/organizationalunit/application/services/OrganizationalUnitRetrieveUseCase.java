@@ -3,6 +3,7 @@ package com.fich.sarh.organizationalunit.application.services;
 import com.fich.sarh.common.UseCase;
 import com.fich.sarh.organizationalunit.application.ports.entrypoint.api.OrganizationalUnitRetrieveServicePort;
 import com.fich.sarh.organizationalunit.application.ports.persistence.OrganizationalUnitRetrievePort;
+import com.fich.sarh.organizationalunit.domain.model.OrganizationalDTO;
 import com.fich.sarh.organizationalunit.domain.model.OrganizationalUnit;
 
 import java.util.List;
@@ -25,6 +26,11 @@ public class OrganizationalUnitRetrieveUseCase implements OrganizationalUnitRetr
     @Override
     public Optional<OrganizationalUnit> findById(Long id) {
         return organizationalUnitRetrievePort.findById(id);
+    }
+
+    @Override
+    public List<OrganizationalDTO> findAllOrganizationDto() {
+        return organizationalUnitRetrievePort.findAllOrganizationalDto();
     }
 
     @Override

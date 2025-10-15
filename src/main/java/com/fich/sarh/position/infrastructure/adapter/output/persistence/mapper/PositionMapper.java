@@ -1,12 +1,8 @@
 package com.fich.sarh.position.infrastructure.adapter.output.persistence.mapper;
 
-import com.fich.sarh.organizationalunit.infrastructure.adapter.output.persistence.mapper.OrganizationalUnitMapper;
-import com.fich.sarh.point.infrastructure.adapter.output.persistence.mapper.PointMapper;
 import com.fich.sarh.position.domain.model.Position;
 import com.fich.sarh.position.infrastructure.adapter.output.persistence.entity.PositionEntity;
-import com.fich.sarh.transformation.infrastructure.adapter.output.persistence.mapper.TransformationMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
@@ -15,7 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface PositionMapper {
 
-    PointMapper INSTANCE = Mappers.getMapper(PointMapper.class);
+    PositionMapper INSTANCE = Mappers.getMapper(PositionMapper.class);
     Position toDto(PositionEntity entity);
 
 

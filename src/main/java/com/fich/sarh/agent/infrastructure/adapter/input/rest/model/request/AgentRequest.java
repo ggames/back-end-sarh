@@ -5,11 +5,7 @@ import com.fich.sarh.common.DocumentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +16,11 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class AgentRequest {
+
+    Long id;
+    
     @NotBlank(message = "Nombre Invalido: Nombre en blanco")
     @NotNull(message = "Nombre Invalido: El nombre es NULL")
     @Size(min = 3, max = 30, message = "Nombre Invalido: Debe tener de 3 a 30 caracteres ")
@@ -40,7 +40,7 @@ public class AgentRequest {
     private String document;
     private LocalDate birthdate;
     private LocalDate leavingdate;
-    private boolean isDeceased;
+    private boolean deceased;
     private String file;
     private String email;
     private String phone;

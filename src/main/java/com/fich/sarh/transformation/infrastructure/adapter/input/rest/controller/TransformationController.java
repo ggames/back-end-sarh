@@ -1,9 +1,9 @@
 package com.fich.sarh.transformation.infrastructure.adapter.input.rest.controller;
 
 import com.fich.sarh.common.WebAdapter;
-import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationRetrieveServicePort;
-import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationSaveServicePort;
-import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationUpdateServicePort;
+import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationRetrieveApiPort;
+import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationSaveApiPort;
+import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationUpdateApiPort;
 import com.fich.sarh.transformation.infrastructure.adapter.input.rest.model.request.TransformationRequest;
 import com.fich.sarh.transformation.infrastructure.adapter.input.rest.model.response.TransformationResponse;
 import com.fich.sarh.transformation.infrastructure.adapter.input.rest.mapper.TransformationRestMapper;
@@ -24,13 +24,13 @@ public class TransformationController {
 
     Logger logger = LoggerFactory.getLogger(TransformationController.
             class);
-    private final TransformationRetrieveServicePort transformationRetrieveServicePort;
+    private final TransformationRetrieveApiPort transformationRetrieveServicePort;
 
-    private final TransformationUpdateServicePort transformationUpdateServicePort;
+    private final TransformationUpdateApiPort transformationUpdateServicePort;
 
-    private final TransformationSaveServicePort transformationSaveServicePort;
+    private final TransformationSaveApiPort transformationSaveServicePort;
 
-    public TransformationController(TransformationRetrieveServicePort transformationRetrieveServicePort, TransformationUpdateServicePort transformationUpdateServicePort, TransformationSaveServicePort transformationSaveServicePort) {
+    public TransformationController(TransformationRetrieveApiPort transformationRetrieveServicePort, TransformationUpdateApiPort transformationUpdateServicePort, TransformationSaveApiPort transformationSaveServicePort) {
         this.transformationRetrieveServicePort = transformationRetrieveServicePort;
         this.transformationUpdateServicePort = transformationUpdateServicePort;
         this.transformationSaveServicePort = transformationSaveServicePort;
@@ -40,7 +40,7 @@ public class TransformationController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TransformationResponse> save(@RequestBody TransformationRequest request) {
 
-        logger.error("VALOR DE LA TRANSFORMACION", request.getResolutionNumber(), request.getResult());
+        logger.error("VALOR DE LA TRANSFORMACION", request.getResolutionNumber(), request.getReason());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 TransformationRestMapper.INSTANCE.toTransformationResponse(
@@ -64,6 +64,7 @@ public class TransformationController {
     @GetMapping("last")
     @PreAuthorize("hasRole('USER')")
     public TransformationResponse getTransformationLast() {
+
         return TransformationRestMapper.INSTANCE.toTransformationResponse(transformationRetrieveServicePort.findFirstByOrderDesc().get());
     }
 }

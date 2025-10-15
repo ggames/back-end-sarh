@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface OrganizationalUnitRestMapper {
 
       OrganizationalUnitRestMapper INSTANCE = Mappers.getMapper(OrganizationalUnitRestMapper.class);

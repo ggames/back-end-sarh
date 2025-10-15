@@ -1,6 +1,6 @@
 package com.fich.sarh.organizationalunit.infrastructure.adapter.input.rest.model.response;
 
-import com.fich.sarh.organizationalsubunit.adapter.output.persistence.entity.OrganizationalSubUnitEntity;
+import com.fich.sarh.agent.domain.model.Agent;
 import com.fich.sarh.organizationalsubunit.domain.model.OrganizationalSubUnit;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,10 +19,10 @@ public class OrganizationalUnitResponse {
 
     String nameUnit;
 
-    String director;
+    Agent director;
 
-    String viceDirector;
+    Agent viceDirector;
 
-    List<OrganizationalSubUnit> subunitList;
+    //List<OrganizationalSubUnit> subunitList;
 
 }

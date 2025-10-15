@@ -5,6 +5,7 @@ import com.fich.sarh.movement.application.ports.entrypoint.api.MovementUpdateSer
 import com.fich.sarh.movement.application.ports.persistence.MovementRetrievePort;
 import com.fich.sarh.movement.application.ports.persistence.MovementSavePort;
 import com.fich.sarh.movement.domain.model.Movement;
+import com.fich.sarh.movement.infrastructure.adapter.output.persistence.entity.MovementId;
 
 @UseCase
 public class MovementUpdateUseCase implements MovementUpdateServicePort {
@@ -20,12 +21,13 @@ public class MovementUpdateUseCase implements MovementUpdateServicePort {
 
     @Override
     public Movement updateMovement(Long id, Movement command) {
+
         return  retrievePort.findById(id).map(
             movement -> {
                 movement.setReasonForMovement(command.getReasonForMovement());
                 movement.setMovementDate(command.getMovementDate());
-                movement.setPlant(command.getPlant());
-                movement.setPosition(command.getPosition());
+                movement.setPlantId(command.getPlantId());
+                movement.setPositionId(command.getPositionId());
 
                 return savePort.saveMovement(movement);
             }

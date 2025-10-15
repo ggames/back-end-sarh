@@ -23,7 +23,7 @@ public class PositionRequest {
     OrganizationalUnit organizationalUnitID;
     StatusOfPositions positionStatus;
     Position newPosition;
-    List<Position> originPosition;
+    // List<Position> originPosition;
     Long pointsAvailable;
     Transformation creationResolutionID;
     Transformation resolutionSuppressionID;

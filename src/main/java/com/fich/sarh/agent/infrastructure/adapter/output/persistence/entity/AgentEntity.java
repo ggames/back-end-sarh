@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Builder
 @Getter
@@ -15,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Agentes")
+@Table(name="Agentes")
 public class AgentEntity {
 
     @Id
@@ -43,7 +41,7 @@ public class AgentEntity {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate leavingdate;
 
-    private boolean isDeceased;
+    private boolean deceased;
 
     private String file;
 

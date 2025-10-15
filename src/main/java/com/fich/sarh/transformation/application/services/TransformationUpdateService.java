@@ -1,19 +1,19 @@
 package com.fich.sarh.transformation.application.services;
 
 import com.fich.sarh.common.UseCase;
-import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationUpdateServicePort;
-import com.fich.sarh.transformation.application.ports.persistence.TransformationRetrievePort;
-import com.fich.sarh.transformation.application.ports.persistence.TransformationSavePort;
+import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationUpdateApiPort;
+import com.fich.sarh.transformation.application.ports.persistence.TransformationRetrieveSpiPort;
+import com.fich.sarh.transformation.application.ports.persistence.TransformationSaveSpiPort;
 import com.fich.sarh.transformation.domain.model.Transformation;
 
 @UseCase
-public class TransformationUpdateService implements TransformationUpdateServicePort {
+public class TransformationUpdateService implements TransformationUpdateApiPort {
 
-    private final TransformationRetrievePort transformationRetrievePort;
+    private final TransformationRetrieveSpiPort transformationRetrievePort;
 
-    private final TransformationSavePort transformationSavePort;
+    private final TransformationSaveSpiPort transformationSavePort;
 
-    public TransformationUpdateService(TransformationRetrievePort transformationRetrievePort, TransformationSavePort transformationSavePort) {
+    public TransformationUpdateService(TransformationRetrieveSpiPort transformationRetrievePort, TransformationSaveSpiPort transformationSavePort) {
         this.transformationRetrievePort = transformationRetrievePort;
         this.transformationSavePort = transformationSavePort;
     }
@@ -21,7 +21,8 @@ public class TransformationUpdateService implements TransformationUpdateServiceP
     @Override
     public Transformation updateTransformation(Long id, Transformation transformation) {
         return  transformationRetrievePort.findById(id).map(transformedSave ->{
-            transformedSave.setResult(transformation.getResult());
+            transformedSave.setDate(transformation.getDate());
+            transformedSave.setReason(transformation.getReason());
             transformedSave.setResolutionNumber(transformation.getResolutionNumber());
             return transformationSavePort.saveTransformation(transformedSave);
         }).get();

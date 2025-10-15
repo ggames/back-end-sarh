@@ -12,6 +12,34 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface MovementMapper {
 
+    //MovementMapper INSTANCE = Mappers.getMapper(MovementMapper.class);
+
+
+    @Mappings({
+            @Mapping(source = "plant.id", target = "plantId"),
+            @Mapping(source = "position.id", target = "positionId")
+    })
+    Movement    toMovement(MovementEntity entity);
+
+    @Mappings({
+            @Mapping(target = "plant", ignore = true),
+            @Mapping(target = "position", ignore = true),
+    })
+    MovementEntity toMovementEntity(Movement movement);
+
+  /*  @Mappings({
+            @Mapping(source = "id.plantId", target = "plantId"),
+            @Mapping(source = "id.positionId", target = "positionId")
+    })
+    List<Movement> toMovementList(List<MovementEntity> entityList);*/
+
+}
+
+
+/*
+@Mapper(componentModel = "spring")
+public interface MovementMapper {
+
     MovementMapper INSTANCE = Mappers.getMapper(MovementMapper.class);
 
 
@@ -34,3 +62,4 @@ public interface MovementMapper {
     List<Movement> toMovementList(List<MovementEntity> entityList);
 
 }
+*/

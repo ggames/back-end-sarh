@@ -1,10 +1,18 @@
 package com.fich.sarh.position.application.services;
 
 import com.fich.sarh.common.UseCase;
+import com.fich.sarh.common.exceptions.BusinessRuleViolationException;
+import com.fich.sarh.organizationalunit.application.ports.persistence.OrganizationalUnitRetrievePort;
+import com.fich.sarh.organizationalunit.domain.model.OrganizationalUnit;
+import com.fich.sarh.point.application.ports.persistence.PointRetrievePort;
+import com.fich.sarh.point.domain.model.Point;
 import com.fich.sarh.position.application.ports.entrypoint.api.PositionUpdateServicePort;
 import com.fich.sarh.position.application.ports.persistence.PositionRetrievePort;
 import com.fich.sarh.position.application.ports.persistence.PositionSavePort;
 import com.fich.sarh.position.domain.model.Position;
+import com.fich.sarh.position.domain.model.PositionCommand;
+import com.fich.sarh.transformation.application.ports.persistence.TransformationRetrieveSpiPort;
+import com.fich.sarh.transformation.domain.model.Transformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,30 +25,60 @@ public class PositionUpdateUseCase implements PositionUpdateServicePort {
     private final PositionRetrievePort positionRetrievePort;
 
     private final PositionSavePort positionSavePort;
+    private final TransformationRetrieveSpiPort transformationRetrieveSpiPort;
+    private final OrganizationalUnitRetrievePort organizationalUnitRetrievePort;
 
-    public PositionUpdateUseCase(PositionRetrievePort positionRetrievePort, PositionSavePort positionSavePort) {
+    private final PointRetrievePort pointRetrievePort;
+    public PositionUpdateUseCase(PositionRetrievePort positionRetrievePort, PositionSavePort positionSavePort, TransformationRetrieveSpiPort transformationRetrieveSpiPort, OrganizationalUnitRetrievePort organizationalUnitRetrievePort, PointRetrievePort pointRetrievePort) {
         this.positionRetrievePort = positionRetrievePort;
         this.positionSavePort = positionSavePort;
+        this.transformationRetrieveSpiPort = transformationRetrieveSpiPort;
+
+        this.organizationalUnitRetrievePort = organizationalUnitRetrievePort;
+        this.pointRetrievePort = pointRetrievePort;
     }
 
     @Override
-    public Position updatePosition(Long id, Position command) {
+    public Position updatePosition(Long id, PositionCommand command) {
 
-        Optional<Position> optionalPosition = positionRetrievePort.findById(id);
+        if(positionRetrievePort.existsOriginPositionId(id)) throw new BusinessRuleViolationException("El cargo ya fue ocupado para crear nuevos cargos");
+
+       Optional<Position> optionalPosition = positionRetrievePort.findPositionById(id);
 
         if (!optionalPosition.isPresent()) {
             throw new RuntimeException("No se encontro el cargo");
         }
 
+        // logger.info("PUNTOS PUNTOS PUNTOS "+ command.getPointId());
+        Optional<Point> point = pointRetrievePort.findById(command.getPointId());
+
+
+        if(!point.isPresent()){
+            throw new RuntimeException("No se encuentra el tipo de cargo");
+        }
+
+        Optional<Transformation> transformation = transformationRetrieveSpiPort.findById(command.getResolutionTransformationId());
+
+        if (!transformation.isPresent()) {
+            throw new RuntimeException("No existe la transformación indicada");
+        }
+
         Position position = optionalPosition.get();
 
+        Optional<OrganizationalUnit> organizationalUnit = organizationalUnitRetrievePort.findById(command.getOrganizationalId());
+
+        if (!organizationalUnit.isPresent()) {
+            throw new RuntimeException("No existe la Unidad Organizativa");
+        }
+
         position.setPositionStatus(command.getPositionStatus());
-        position.setPointID(command.getPointID());
-        position.setOrganizationalUnitID(command.getOrganizationalUnitID());
-        position.setNewPosition(command.getNewPosition());
-        position.setPointsAvailable(command.getPointsAvailable());
-        position.setCreationResolutionID(command.getCreationResolutionID());
-        position.setResolutionSuppressionID(command.getResolutionSuppressionID());
+        position.setPointID(point.get());
+        position.setOrganizationalUnitID(organizationalUnit.get());
+        //  position.setNewPosition(command.getNewPosition());
+        //  position.setPointsAvailable(command.getPointsAvailable());
+        position.setCreationResolutionID(transformation.get());
+        // position.setResolutionSuppressionID(command.getResolutionSuppressionID());
+
 
         return positionSavePort.savePosition(position);
 
@@ -49,7 +87,7 @@ public class PositionUpdateUseCase implements PositionUpdateServicePort {
     @Override
     public Position updatePositionByAvailablePoint(Long id, Position command) {
 
-        Optional<Position> optionalPosition = positionRetrievePort.findById(id);
+        Optional<Position> optionalPosition = positionRetrievePort.findPositionById(id);
 
         if (!optionalPosition.isPresent()) {
             throw new RuntimeException("No se encontro el cargo");
@@ -58,15 +96,18 @@ public class PositionUpdateUseCase implements PositionUpdateServicePort {
         Position position = optionalPosition.get();
 
         position.setPointsAvailable(command.getPointsAvailable());
+        position.setPositionStatus(command.getPositionStatus());
         position.setNewPosition(command.getNewPosition());
         position.setResolutionSuppressionID(command.getResolutionSuppressionID());
+
+        logger.error("NUEVO ESTADO CARGO ", command.getPositionStatus());
         return positionSavePort.savePosition(position);
     }
 
     @Override
     public Position updatePositionByOriginator(Long id, Position command) {
 
-        Optional<Position> optionalPosition = positionRetrievePort.findById(id);
+        Optional<Position> optionalPosition = positionRetrievePort.findPositionById(id);
 
         if (!optionalPosition.isPresent()) {
             throw new RuntimeException("No se encontro el cargo");

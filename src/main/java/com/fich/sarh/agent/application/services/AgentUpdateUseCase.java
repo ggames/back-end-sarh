@@ -26,7 +26,7 @@ public class AgentUpdateUseCase implements AgentUpdateServicePort {
     @Override
     public Agent updateAgent(Long id, Agent command) {
 
-        logger.error(command.getFirstname()," ", command.getLastname());
+        logger.error("UPPPPDATE AGENT " +  command);
         return Optional.ofNullable(agentRetrievePort.findById(id))
                 .map(savedAgent -> savedAgent.get())
                 .map(savedAgent -> {

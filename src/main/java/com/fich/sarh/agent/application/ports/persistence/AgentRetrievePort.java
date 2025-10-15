@@ -13,4 +13,6 @@ public interface AgentRetrievePort {
 
     Optional<Agent> findById(Long id);
     Agent findByDocument(String document);
+
+    List<Agent> findByLastname(String lastname);
 }

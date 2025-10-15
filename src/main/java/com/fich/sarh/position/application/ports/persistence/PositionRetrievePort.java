@@ -9,9 +9,17 @@ import java.util.Optional;
 
 public interface PositionRetrievePort {
 
+    List<PositionDto> findOriginPositions(Long id_generatePosition);
+
+    boolean existsOriginPositionId(Long id_generatePosition);
+    List<PositionDto> findVacantPositions();
     List<PositionDto> findAllPositions();
 
-    Optional<Position> findById(Long id);
+    List<Position> findAllPosition();
+
+    List<PositionDto>findFreePositions();
+
+    Optional<Position> findPositionById(Long id);
 
     List<Position> findAllByIdIn(List<Long> ids);
 

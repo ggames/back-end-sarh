@@ -32,7 +32,7 @@ public class Agent {
 
     private LocalDate leavingdate;
 
-    private boolean isDeceased;
+    private boolean deceased;
 
     private String file;
 

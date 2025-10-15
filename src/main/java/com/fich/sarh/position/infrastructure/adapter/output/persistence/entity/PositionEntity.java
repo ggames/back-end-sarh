@@ -1,6 +1,7 @@
 package com.fich.sarh.position.infrastructure.adapter.output.persistence.entity;
 
 import com.fich.sarh.common.StatusOfPositions;
+import com.fich.sarh.movement.infrastructure.adapter.output.persistence.entity.MovementEntity;
 import com.fich.sarh.organizationalunit.domain.model.OrganizationalUnit;
 import com.fich.sarh.organizationalunit.infrastructure.adapter.output.persistence.entity.OrganizationalUnitEntity;
 import com.fich.sarh.point.infrastructure.adapter.output.persistence.entity.PointEntity;
@@ -10,6 +11,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -20,7 +22,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 @Entity
-@Table(name = "Cargos")
+@Table(name = "cargos")
 public class PositionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,4 +57,7 @@ public class PositionEntity {
     @JoinColumn(name = "resolucion_supresion_id")
     @ManyToOne(targetEntity = TransformationEntity.class)
     TransformationEntity resolutionSuppressionID;
+
+    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL)
+    List<MovementEntity> movements = new ArrayList<>();
 }

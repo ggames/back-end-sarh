@@ -1,19 +1,19 @@
 package com.fich.sarh.transformation.application.services;
 
 import com.fich.sarh.common.UseCase;
-import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationRetrieveServicePort;
-import com.fich.sarh.transformation.application.ports.persistence.TransformationRetrievePort;
+import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationRetrieveApiPort;
+import com.fich.sarh.transformation.application.ports.persistence.TransformationRetrieveSpiPort;
 import com.fich.sarh.transformation.domain.model.Transformation;
 
 import java.util.List;
 import java.util.Optional;
 
 @UseCase
-public class TransformationRetrieveService implements TransformationRetrieveServicePort {
+public class TransformationRetrieveService implements TransformationRetrieveApiPort {
 
-    private final TransformationRetrievePort transformationRetrievePort;
+    private final TransformationRetrieveSpiPort transformationRetrievePort;
 
-    public TransformationRetrieveService(TransformationRetrievePort transformationRetrievePort) {
+    public TransformationRetrieveService(TransformationRetrieveSpiPort transformationRetrievePort) {
         this.transformationRetrievePort = transformationRetrievePort;
     }
 

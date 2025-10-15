@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Embeddable
+@ToString
 public class MovementId implements Serializable {
 
     @Column(name = "planta_id")

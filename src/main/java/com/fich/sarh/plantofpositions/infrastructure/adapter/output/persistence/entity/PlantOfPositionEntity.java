@@ -1,15 +1,18 @@
 package com.fich.sarh.plantofpositions.infrastructure.adapter.output.persistence.entity;
 
-import com.fich.sarh.Planthistory.infrastructure.adapter.output.persistence.entity.PlantHistoryEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fich.sarh.organizationalsubunit.infrastructure.adapter.output.persistence.entity.OrganizationalSubUnitEntity;
+import com.fich.sarh.planthistory.infrastructure.adapter.output.persistence.entity.PlantHistoryEntity;
 import com.fich.sarh.agent.infrastructure.adapter.output.persistence.entity.AgentEntity;
 import com.fich.sarh.common.CharacterPlant;
 import com.fich.sarh.common.PlantStatus;
-import com.fich.sarh.point.infrastructure.adapter.output.persistence.entity.PointEntity;
+import com.fich.sarh.movement.infrastructure.adapter.output.persistence.entity.MovementEntity;
 import com.fich.sarh.position.infrastructure.adapter.output.persistence.entity.PositionEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -27,12 +30,19 @@ public class PlantOfPositionEntity {
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cargo_id")
-    PositionEntity positionID;
+    @JoinColumn(name = "cargo_id", nullable = false)
+    @JsonIgnore
+    PositionEntity position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agente_id")
-    AgentEntity agentID;
+    @JsonIgnore
+    AgentEntity agent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subunidad_organizativa_id")
+    @JsonIgnore
+    OrganizationalSubUnitEntity organizationalSubUnit;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name ="caracter")
@@ -42,7 +52,11 @@ public class PlantOfPositionEntity {
     @Column(name = "estado_vigente_id")
     PlantStatus currentStatusID;
 
-    @OneToMany(targetEntity = PlantHistoryEntity.class ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "plantOfPosition")
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<MovementEntity> movements = new ArrayList<>();
+
+    @OneToMany(mappedBy = "plantOfPosition",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<PlantHistoryEntity> plantHistoryEntities;
 
 }

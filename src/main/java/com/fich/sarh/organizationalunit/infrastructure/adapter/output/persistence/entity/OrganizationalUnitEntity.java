@@ -1,13 +1,9 @@
 package com.fich.sarh.organizationalunit.infrastructure.adapter.output.persistence.entity;
 
-import com.fich.sarh.organizationalsubunit.adapter.output.persistence.entity.OrganizationalSubUnitEntity;
+import com.fich.sarh.agent.infrastructure.adapter.output.persistence.entity.AgentEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Builder
 @Getter
@@ -27,11 +23,18 @@ public class OrganizationalUnitEntity {
     @Column(name = "nombreUnidadOrganizacional")
     String nameUnit;
 
-    String director;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "director_id", nullable = false)
+    AgentEntity director;
 
-    String viceDirector;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vicedirector_id", nullable = true)
+    AgentEntity viceDirector;
 
-    //@JsonBackReference
-    //@OneToMany(mappedBy = "organizationalUnit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    //List<OrganizationalSubUnitEntity> subunitList;
+   private boolean isDirectorDifferentFromVice(){
+       if(director == null || viceDirector == null){
+           return true;
+       }
+       return !director.getId().equals(viceDirector.getId());
+   }
 }

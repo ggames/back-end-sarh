@@ -13,7 +13,6 @@ public interface PositionDto {
 
     String getNamePosition();
     String getNameUnit();
-
     Long getPointsAvailable();
     StatusOfPositions getPositionStatus();
     String getResolutionNumber();

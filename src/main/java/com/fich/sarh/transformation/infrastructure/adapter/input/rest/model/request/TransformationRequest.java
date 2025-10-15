@@ -2,6 +2,9 @@ package com.fich.sarh.transformation.infrastructure.adapter.input.rest.model.req
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -11,7 +14,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TransformationRequest {
 
+    LocalDate date;
+
     String resolutionNumber;
 
-    Float result;
+    String reason;
+
 }

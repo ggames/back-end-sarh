@@ -5,6 +5,7 @@ import com.fich.sarh.common.UseCase;
 import com.fich.sarh.movement.application.ports.entrypoint.api.MovementRetrieveServicePort;
 import com.fich.sarh.movement.application.ports.persistence.MovementRetrievePort;
 import com.fich.sarh.movement.domain.model.Movement;
+import com.fich.sarh.movement.infrastructure.adapter.output.persistence.entity.MovementId;
 import com.fich.sarh.plantofpositions.domain.model.PlantOfPosition;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +40,8 @@ public class MovementRetrieveUseCase implements MovementRetrieveServicePort {
         return retrievePort.findByPlant(plant);
     }
 
-    @Override
+  /*  @Override
     public List<Movement> fetchMovementWithInactiveAgent(List<PlantStatus> status) {
-        return retrievePort.fetchMovementWithInactiveAgent(status);
-    }
+        return null; // retrievePort.fetchMovementWithInactiveAgent(status);
+    }*/
 }

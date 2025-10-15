@@ -47,6 +47,18 @@ public class AgentController {
                .AgentListToAgentResponseList(agentRetrievePort.getAllAgent());
     }
 
+    @GetMapping("document/{document}")
+    @PreAuthorize("hasRole('USER')")
+    public AgentResponse findAgentByDocument(@PathVariable String document ){
+        return  AgentRestMapper.INSTANCE.AgentToAgentResponse(agentRetrievePort.fetchByDocument(document));
+    }
+
+    @GetMapping("search/{query}")
+    @PreAuthorize("hasRole('USER')")
+    public List<AgentResponse> findAgentByLastnameOrFirstname(@PathVariable String query){
+        return  AgentRestMapper.INSTANCE.AgentListToAgentResponseList(agentRetrievePort.fetchByLastname(query));
+    }
+
     @GetMapping("{id}")
     @PreAuthorize("hasRole('USER')")
     public AgentResponse findByIdAgent(@PathVariable Long id) {
@@ -68,7 +80,7 @@ public class AgentController {
     @PutMapping("update/{id}")
     @PreAuthorize("hasRole('USER')")
     public AgentResponse update(@PathVariable Long id, @RequestBody AgentRequest request){
-
+        logger.info("AGENTE ACTUALIZADO " + request + " ID " + id);
         return restMapper.AgentToAgentResponse(agentUpdatePort.updateAgent(id,
                 restMapper.AgentRequestToAgent(request) ));
     }

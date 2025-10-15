@@ -19,6 +19,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class AgentResponse {
 
+    private Long id;
+
     private String firstname;
 
     private String lastname;
@@ -31,7 +33,7 @@ public class AgentResponse {
 
     private LocalDate leavingdate;
 
-    private boolean isDeceased;
+    private boolean deceased;
 
     private String file;
 

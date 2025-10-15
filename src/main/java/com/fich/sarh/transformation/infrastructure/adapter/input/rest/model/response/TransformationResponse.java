@@ -3,6 +3,8 @@ package com.fich.sarh.transformation.infrastructure.adapter.input.rest.model.res
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Builder
 @Getter
 @Setter
@@ -13,7 +15,9 @@ public class TransformationResponse {
 
     Long id;
 
+    LocalDate date;
+
     String resolutionNumber;
 
-    Float result;
+    String reason;
 }

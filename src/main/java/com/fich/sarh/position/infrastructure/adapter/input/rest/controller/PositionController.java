@@ -1,6 +1,7 @@
 package com.fich.sarh.position.infrastructure.adapter.input.rest.controller;
 
 import com.fich.sarh.common.WebAdapter;
+import com.fich.sarh.plantofpositions.infrastructure.adapter.input.rest.model.request.PlantOfPositionRequest;
 import com.fich.sarh.position.application.ports.entrypoint.api.PositionRetrieveServicePort;
 import com.fich.sarh.position.application.ports.entrypoint.api.PositionSaveServicePort;
 import com.fich.sarh.position.application.ports.entrypoint.api.PositionUpdateServicePort;
@@ -9,8 +10,12 @@ import com.fich.sarh.position.domain.model.PositionCommand;
 import com.fich.sarh.position.domain.model.PositionDto;
 import com.fich.sarh.position.infrastructure.adapter.input.rest.model.response.PositionResponse;
 import com.fich.sarh.position.infrastructure.adapter.output.persistence.mapper.PositionRestMapper;
+import jakarta.websocket.server.PathParam;
+import org.aspectj.bridge.ICommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,20 +38,46 @@ public class PositionController {
         this.updateService = updateService;
     }
 
+    @GetMapping("origin/{id_generatePosition}")
+    @PreAuthorize("hasRole('USER')")
+    public List<PositionDto> findOriginPosition(@PathVariable Long id_generatePosition) {
+
+        return retrieveService.getOriginPositions(id_generatePosition);
+    }
+
+    @GetMapping("available")
+    @PreAuthorize("hasRole('USER')")
+    public List<PositionDto> findAvailablePositions(){
+        return retrieveService.getFreePositions();
+    }
+
+    @GetMapping("allposition")
+    @PreAuthorize("hasRole('USER')")
+    public List<PositionResponse> findAll(){
+        infoLogger.info("CANTIDAD DE CARGOS " + retrieveService.getAllPosition().size());
+        return PositionRestMapper.INSTANCE.toPositionResponseList(retrieveService.getAllPosition());
+    }
+
+    @GetMapping("vacant")
+    @PreAuthorize("hasRole('USER')")
+    public List<PositionDto> findVacantPositions() {
+        return retrieveService.getVacantPositions();
+    }
     @GetMapping("all")
     @PreAuthorize("hasRole('USER')")
-    public List<PositionDto> findAll() {
+    public List<PositionDto> findAllPosition() {
         return retrieveService.getAllPositions();
     }
 
     @GetMapping("{id}")
     @PreAuthorize("hasRole('USER')")
-    public PositionResponse getPositionById(Long id){
-        Optional<Position> positionFound = retrieveService.findById(id);
+    public Position getPositionById(@PathVariable Long id){
+        Optional<Position> positionFound = retrieveService.findPositionById(id);
+        infoLogger.info("CARGOS ENCONTRADO ????" + positionFound.get());
         if(!positionFound.isPresent()) {
             return null;
         }
-        return PositionRestMapper.INSTANCE.toPositionResponse(positionFound.get());
+        return positionFound.get();
     }
 
     @PostMapping("create")
@@ -54,6 +85,13 @@ public class PositionController {
     public Position save(@RequestBody PositionCommand command){
         infoLogger.info("SOLICITUD de CARGO " + command.toString());
         return saveService.savePosition(command);
+    }
+
+    @PutMapping("update/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> update(@PathVariable Long id,@RequestBody PositionCommand request){
+        infoLogger.info("VALOR ID CARGO " + request);
+        return  new ResponseEntity<>(updateService.updatePosition(id, request), HttpStatus.OK);
     }
 
    /* @PostMapping("create")

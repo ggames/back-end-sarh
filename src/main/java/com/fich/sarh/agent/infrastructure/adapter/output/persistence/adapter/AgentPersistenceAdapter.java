@@ -20,9 +20,11 @@ import java.util.stream.Collectors;
 public class AgentPersistenceAdapter implements AgentLoadPort, AgentSavePort, AgentRetrievePort {
 
     private final AgentRepository agentRepository;
+    private final AgentMapper mapper;
 
-    public AgentPersistenceAdapter(AgentRepository agentRepository) {
+    public AgentPersistenceAdapter(AgentRepository agentRepository, AgentMapper mapper) {
         this.agentRepository = agentRepository;
+        this.mapper = mapper;
     }
 
     //private final AgentMapper agentMapper;
@@ -37,14 +39,14 @@ public class AgentPersistenceAdapter implements AgentLoadPort, AgentSavePort, Ag
        // Agent agentDto = agentEntity.isPresent()? agentMapper.toDto(agentEntity.get()):null;
 
         return agentRepository.findById(id)
-                .map(agent -> AgentMapper.INSTANCE.AgentEntityToAgent(agent));
+                .map( mapper::toDto);
     }
 
     @Override
     public Agent saveAgent(Agent agent) {
 
-        return AgentMapper.INSTANCE.AgentEntityToAgent (agentRepository
-                .save(AgentMapper.INSTANCE.AgentToAgentEntity(agent)));
+        return AgentMapper.INSTANCE.toDto (agentRepository
+                .save(mapper.toEntity(agent)));
         // AgentEntity agentEntity = agentMapper.toEntity(agent);
         // return agentMapper.toDto(agentRepository.save(agentEntity));
     }
@@ -56,7 +58,7 @@ public class AgentPersistenceAdapter implements AgentLoadPort, AgentSavePort, Ag
 
           return  agentRepository.findAll()
                 .stream()
-                .map(agent -> AgentMapper.INSTANCE.AgentEntityToAgent(agent)).collect(Collectors.toList());
+                .map( mapper::toDto).collect(Collectors.toList());
         //return AgentMapper.INSTANCE.toAgenList(agentRepository.findAll());
     }
 
@@ -64,16 +66,24 @@ public class AgentPersistenceAdapter implements AgentLoadPort, AgentSavePort, Ag
     public Optional<Agent> findById(Long id) {
 
         return agentRepository.findById(id)
-                .map(agent -> AgentMapper.INSTANCE.AgentEntityToAgent(agent));
+                .map(mapper::toDto);
     }
 
 
     @Override
     public Agent findByDocument(String document) {
-        Optional<AgentEntity> agentEntity = agentRepository.findByDocument(document);
+        Optional<AgentEntity> agentEntity = agentRepository.findAgentByDocument(document);
 
-        Agent agent = AgentMapper.INSTANCE.AgentEntityToAgent(agentEntity.get());
-        //return (agent.isPresent())? agentMapper.toDto(agent.get()): null ;
+        Agent agent = mapper.toDto(agentEntity.get());
+        //return (ag                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ent.isPresent())? agentMapper.toDto(agent.get()): null ;
         return agent;
+    }
+
+    @Override
+    public List<Agent> findByLastname(String lastname) {
+        List<AgentEntity> agentEntityList = agentRepository.findAgentByLastname(lastname);
+        List<Agent> agentList = AgentMapper.INSTANCE.toAgenList(agentEntityList);
+
+        return agentList;
     }
 }

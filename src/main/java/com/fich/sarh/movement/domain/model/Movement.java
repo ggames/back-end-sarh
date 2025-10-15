@@ -8,23 +8,27 @@ import com.fich.sarh.position.domain.model.Position;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString
 public class Movement {
+
+    Long id;
 
     Long plantId;
 
     Long positionId;
 
-    Date movementDate;
+    LocalDate movementDate;
 
     String reasonForMovement;
 
-    PlantOfPosition plant;
 
-    Position position;
 }

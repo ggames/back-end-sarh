@@ -1,16 +1,16 @@
 package com.fich.sarh.transformation.application.services;
 
 import com.fich.sarh.common.UseCase;
-import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationSaveServicePort;
-import com.fich.sarh.transformation.application.ports.persistence.TransformationSavePort;
+import com.fich.sarh.transformation.application.ports.entrypoint.api.TransformationSaveApiPort;
+import com.fich.sarh.transformation.application.ports.persistence.TransformationSaveSpiPort;
 import com.fich.sarh.transformation.domain.model.Transformation;
 
 @UseCase
-public class TransformationSaveService implements TransformationSaveServicePort {
+public class TransformationSaveService implements TransformationSaveApiPort {
 
-    private final TransformationSavePort transformationSavePort;
+    private final TransformationSaveSpiPort transformationSavePort;
 
-    public TransformationSaveService(TransformationSavePort transformationSavePort) {
+    public TransformationSaveService(TransformationSaveSpiPort transformationSavePort) {
         this.transformationSavePort = transformationSavePort;
     }
 

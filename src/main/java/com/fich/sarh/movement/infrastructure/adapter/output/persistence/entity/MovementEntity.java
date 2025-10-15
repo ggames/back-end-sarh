@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -22,21 +23,20 @@ import java.util.Date;
 @Setter
 public class MovementEntity implements Serializable {
 
-    @EmbeddedId
-    MovementId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-
-
-    @ManyToOne(targetEntity = PlantOfPositionEntity.class)
-    @MapsId("plantId")
+   @ManyToOne
+    @JoinColumn(name="planta_id")
     PlantOfPositionEntity plant;
 
-    @ManyToOne(targetEntity = PositionEntity.class)
-    @MapsId("positionId")
+    @ManyToOne
+    @JoinColumn(name = "cargo_id")
     PositionEntity position;
 
     @Column(name = "fecha_movimiento")
-    Date movementDate;
+    LocalDate movementDate;
 
     @Column(name = "motivo_movimiento")
     String reasonForMovement;

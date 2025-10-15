@@ -20,15 +20,35 @@ public class PositionRetrieveUseCase implements PositionRetrieveServicePort {
     }
 
     @Override
+    public List<PositionDto> getOriginPositions(Long id_generatePosition) {
+        return positionRetrievePort.findOriginPositions(id_generatePosition);
+    }
+
+    @Override
     public List<PositionDto> getAllPositions() {
 
         return positionRetrievePort.findAllPositions();
     }
 
     @Override
-    public Optional<Position> findById(Long id) {
+    public List<Position> getAllPosition() {
+        return positionRetrievePort.findAllPosition();
+    }
 
-        return positionRetrievePort.findById(id);
+    @Override
+    public List<PositionDto> getVacantPositions() {
+        return positionRetrievePort.findVacantPositions();
+    }
+
+    @Override
+    public List<PositionDto> getFreePositions() {
+        return positionRetrievePort.findFreePositions();
+    }
+
+    @Override
+    public Optional<Position> findPositionById(Long id) {
+
+        return positionRetrievePort.findPositionById(id);
     }
 
     @Override

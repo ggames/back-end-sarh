@@ -16,9 +16,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlantOfPositionResponse {
 
-    Position positionID;
+    Long id;
 
-    Agent agentID;
+    Position position;
+
+    Agent agent;
 
     CharacterPlant characterplantID;
 

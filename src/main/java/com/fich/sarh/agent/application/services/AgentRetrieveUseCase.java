@@ -36,4 +36,10 @@ public class AgentRetrieveUseCase implements AgentRetrieveServicePort {
     {
         return agentRetrievePort.findByDocument(document);
     }
+
+    @Override
+    public List<Agent> fetchByLastname(String lastname) {
+
+        return agentRetrievePort.findByLastname(lastname);
+    }
 }

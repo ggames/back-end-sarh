@@ -1,9 +1,10 @@
 package com.fich.sarh.position.application.services;
 
+import com.fich.sarh.common.StatusOfPositions;
 import com.fich.sarh.common.UseCase;
 import com.fich.sarh.organizationalunit.application.ports.persistence.OrganizationalUnitRetrievePort;
 import com.fich.sarh.organizationalunit.domain.model.OrganizationalUnit;
-import com.fich.sarh.plantofpositions.application.ports.persistence.PlantOfPositionRetrievePort;
+import com.fich.sarh.plantofpositions.application.ports.persistence.PlantOfPositionRetrieveSpiPort;
 import com.fich.sarh.point.application.ports.persistence.PointRetrievePort;
 import com.fich.sarh.point.domain.model.Point;
 import com.fich.sarh.position.application.ports.entrypoint.api.PositionSaveServicePort;
@@ -12,12 +13,11 @@ import com.fich.sarh.position.application.ports.persistence.PositionRetrievePort
 import com.fich.sarh.position.application.ports.persistence.PositionSavePort;
 import com.fich.sarh.position.domain.model.Position;
 import com.fich.sarh.position.domain.model.PositionCommand;
-import com.fich.sarh.transformation.application.ports.persistence.TransformationRetrievePort;
+import com.fich.sarh.transformation.application.ports.persistence.TransformationRetrieveSpiPort;
 import com.fich.sarh.transformation.domain.model.Transformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,12 +31,12 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
 
     private final PositionRetrievePort positionRetrievePort;
     private final OrganizationalUnitRetrievePort organizationalUnitRetrievePort;
-    private final TransformationRetrievePort transformationRetrievePort;
-    private final PlantOfPositionRetrievePort plantRetrieve;
+    private final TransformationRetrieveSpiPort transformationRetrievePort;
+    private final PlantOfPositionRetrieveSpiPort plantRetrieve;
 
     private final PositionUpdateServicePort updateServicePort;
 
-    public PositionSaveUseCase(PointRetrievePort pointRetrievePort, PositionSavePort positionSavePort, PositionRetrievePort positionRetrievePort, OrganizationalUnitRetrievePort organizationalUnitRetrievePort, TransformationRetrievePort transformationRetrievePort, PlantOfPositionRetrievePort plantRetrieve, PositionUpdateServicePort updateServicePort) {
+    public PositionSaveUseCase(PointRetrievePort pointRetrievePort, PositionSavePort positionSavePort, PositionRetrievePort positionRetrievePort, OrganizationalUnitRetrievePort organizationalUnitRetrievePort, TransformationRetrieveSpiPort transformationRetrievePort, PlantOfPositionRetrieveSpiPort plantRetrieve, PositionUpdateServicePort updateServicePort) {
         this.pointRetrievePort = pointRetrievePort;
         this.positionSavePort = positionSavePort;
         this.positionRetrievePort = positionRetrievePort;
@@ -53,22 +53,31 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
         Optional<Point> pointFound = pointRetrievePort.findById(command.getPointId());
 
 
-        if(!pointFound.isPresent()){
+        if (!pointFound.isPresent()) {
             throw new RuntimeException("No encontrado");
         }
 
-        Transformation transformation = transformationRetrievePort.findById(command.getResolutionTransformationId()).get();
-        OrganizationalUnit organizationalUnit = organizationalUnitRetrievePort.findById(command.getOrganizationalId()).get();
+        Optional<Transformation> transformation = transformationRetrievePort.findById(command.getResolutionTransformationId());
+
+        if (!transformation.isPresent()) {
+            throw new RuntimeException("Transformación no encontrada");
+        }
+
+        Optional<OrganizationalUnit> organizationalUnit = organizationalUnitRetrievePort.findById(command.getOrganizationalId());
+
+        if (!organizationalUnit.isPresent()) {
+            throw new RuntimeException("Unidad Organizacional no encontrada");
+        }
         List<Position> originPositions = positionRetrievePort.findAllByIdIn(command.getOriginPositionIds());
 
-        logger.info("CARGO CREADO " + pointFound.get() + " Origen Cargo " + originPositions );
+        logger.info("CARGO CREADO " + pointFound.get() + " Origen Cargo " + originPositions);
         Position position = Position.builder()
                 .pointID(pointFound.get())
-                .organizationalUnitID(organizationalUnit)
+                .organizationalUnitID(organizationalUnit.get())
                 .positionStatus(command.getPositionStatus())
                 .pointsAvailable(pointFound.get().getAmountPoint())
                 .newPosition(null)
-                .creationResolutionID(transformation)
+                .creationResolutionID(transformation.get())
 //                .originPosition(originPositions)
                 .build();
 
@@ -76,21 +85,25 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
         if (!originPositions.isEmpty()) {
             List<Position> positionsCalculate = calculatePosition(originPositions, pointFound.get().getAmountPoint());
             for (Position originator : positionsCalculate) {
-                originator.setResolutionSuppressionID(transformation);
+                if(originator.getPositionStatus() != StatusOfPositions.SUPRIMIDO){
+                    originator.setPositionStatus(StatusOfPositions.SUPRIMIDO);
+                    originator.setResolutionSuppressionID(transformation.get());
+                }
+
                 updateServicePort.updatePositionByAvailablePoint(originator.getId(), originator);
             }
             Position positionToUpdate = positionSavePort.savePosition(position);
             logger.info("CARGO COMPLETO " + positionToUpdate);
             for (Position originator : positionsCalculate) {
                 originator.setNewPosition(positionToUpdate);
+
                 updateServicePort.updatePositionByOriginator(originator.getId(), originator);
             }
 
             return positionToUpdate;
         }
 
-       Position positionToUpdate =  positionSavePort.savePosition(position);
-
+        Position positionToUpdate = positionSavePort.savePosition(position);
 
 
         return positionToUpdate;
