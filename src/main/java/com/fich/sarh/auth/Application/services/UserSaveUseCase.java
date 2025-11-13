@@ -4,6 +4,7 @@ import com.fich.sarh.auth.Application.ports.entrypoint.api.UserSaveServicePort;
 import com.fich.sarh.auth.Application.ports.output.persistence.UserSavePort;
 import com.fich.sarh.auth.Domain.model.UserDTO;
 import com.fich.sarh.common.UseCase;
+import org.springframework.web.multipart.MultipartFile;
 
 @UseCase
 public class UserSaveUseCase implements UserSaveServicePort {

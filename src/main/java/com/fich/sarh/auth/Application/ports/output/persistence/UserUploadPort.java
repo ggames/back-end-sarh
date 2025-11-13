@@ -1,9 +1,8 @@
 package com.fich.sarh.auth.Application.ports.output.persistence;
 
-import com.fich.sarh.auth.Domain.model.UserDTO;
 import org.springframework.web.multipart.MultipartFile;
 
-public interface UserSavePort {
+public interface UserUploadPort {
 
-    UserDTO saveUsername(UserDTO user);
+    String uploadProfilePicture(MultipartFile file);
 }

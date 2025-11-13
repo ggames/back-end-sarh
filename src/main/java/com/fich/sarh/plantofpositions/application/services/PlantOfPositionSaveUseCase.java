@@ -1,5 +1,7 @@
 package com.fich.sarh.plantofpositions.application.services;
 
+import com.fich.sarh.common.CharacterPlant;
+import com.fich.sarh.common.PlantStatus;
 import com.fich.sarh.planthistory.application.ports.persistence.PlantHistorySavePort;
 import com.fich.sarh.planthistory.domain.model.PlantHistory;
 import com.fich.sarh.agent.application.ports.persistence.AgentRetrievePort;
@@ -20,13 +22,14 @@ import com.fich.sarh.position.domain.model.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @UseCase
 public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
 
     Logger logger = LoggerFactory.getLogger(PlantOfPositionSaveUseCase.class);
-   private final PlantOfPositionRetrieveSpiPort plantRetrieve;
+    private final PlantOfPositionRetrieveSpiPort plantRetrieve;
     private final PlantOfPositionSaveSpiPort savePort;
     private final PositionRetrievePort positionRetrievePort;
     private final AgentRetrievePort agentRetrievePort;
@@ -50,7 +53,9 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
         this.mapper = mapper;
     }
 
-    @Override
+
+
+/*    @Override
     public PlantOfPosition savePlantOfPosition(PlantOfPositionCommand plantpositionCommand) {
 
         if(plantRetrieve.existsByPositionAndAgent(plantpositionCommand.getPositionId(), plantpositionCommand.getAgentId())){
@@ -71,13 +76,54 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
 
 
         return  plant;
+    }*/
+
+    @Override
+    public PlantOfPosition savePlantOfPosition(PlantOfPositionCommand plantpositionCommand) {
+
+        boolean active_agent_position = plantRetrieve.existsByPositionAndAgent(plantpositionCommand.getPositionId(),
+                plantpositionCommand.getAgentId());
+
+        if (active_agent_position) {
+            throw new BusinessRuleViolationException("Ya hay un agente activo en el cargo");
+        }
+
+        Position position = positionRetrievePort.findPositionById(plantpositionCommand.getPositionId())
+                .orElseThrow(() -> new BusinessRuleViolationException("No existe el cargo seleccionado"));
+
+        Agent agent = agentRetrievePort.findById(plantpositionCommand.getAgentId()).orElseThrow(() ->
+                new BusinessRuleViolationException("No existe el agente"));
+
+        PlantOfPosition plantposition = registerPlantPosition(agent, position,
+                plantpositionCommand.getCurrentStatusID(),
+                plantpositionCommand.getCharacterplantID());
+
+        Movement movement = registerMovement(plantposition, position,
+                plantpositionCommand.getDateFrom(),
+                plantpositionCommand.getReasonForMovement());
+
+        PlantHistory plantHistory = registerPlantHistory(plantposition, position,
+                                  plantpositionCommand.getDateFrom(), plantpositionCommand.getCurrentStatusID());
+
+        return plantposition;
     }
 
-    private PlantOfPosition registerPlantPosition(PlantOfPositionCommand request, Position position){
+    private PlantOfPosition registerPlantPosition(Agent agent, Position position,
+                                                  PlantStatus currentStatus, CharacterPlant characterPlant) {
+        PlantOfPosition plant = PlantOfPosition
+                .builder().agent(agent)
+                .position(position)
+                .currentStatusID(currentStatus)
+                .characterplantID(characterPlant).build();
+
+        return savePort.savePlantOfPosition(plant);
+    }
+
+   /* private PlantOfPosition registerPlantPosition(PlantOfPositionCommand request, Position position) {
 
         Optional<Agent> agent = agentRetrievePort.findById(request.getAgentId());
 
-        if(!agent.isPresent()) {
+        if (!agent.isPresent()) {
             throw new RuntimeException("No existe el agente");
         }
 
@@ -87,26 +133,51 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
                 .currentStatusID(request.getCurrentStatusID())
                 .characterplantID(request.getCharacterplantID()).build();
 
-        return  savePort.savePlantOfPosition(plant);
+        return savePort.savePlantOfPosition(plant);
 
-    }
-    private PlantHistory registerPlantHistory(PlantOfPositionCommand request, PlantOfPosition plant){
+    }*/
+
+
+    private PlantHistory registerPlantHistory(PlantOfPosition plant, Position position,
+                                              LocalDate dateFrom, PlantStatus currentStatus) {
         PlantHistory plantHistory = PlantHistory.builder()
                 .plantOfPosition(plant)
-                .plantStatus(request.getCurrentStatusID())
-                .dateFrom(request.getDateFrom()).build();
+                .plantStatus(currentStatus)
+                .dateFrom(dateFrom).build();
         return plantHistorySavePort.savePlantHistory(plantHistory);
+
     }
-    private Movement registerMovement(PlantOfPositionCommand request,
-                    PlantOfPosition plantPosition, Position position) {
+
+    private Movement registerMovement(PlantOfPosition plant, Position position, LocalDate dateFrom, String reason) {
+
+        Movement movement = Movement.builder().positionId(position.getId())
+                .plantId(plant.getId())
+                .movementDate(dateFrom)
+                .reasonForMovement(reason).build();
+        return movementSavePort.saveMovement(movement);
+
+    }
+
+   /* private Movement registerMovement(PlantOfPositionCommand request,
+                                      PlantOfPosition plantPosition, Position position) {
         Movement movement = Movement.builder()
-                            .positionId(position.getId())
+                .positionId(position.getId())
                 .plantId(plantPosition.getId())
                 .movementDate(request.getDateFrom())
                 .reasonForMovement(request.getReasonForMovement()).build();
 
         return movementSavePort.saveMovement(movement);
-    }
+    }*/
+
+   /* private PlantHistory registerPlantHistory(PlantOfPositionCommand request, PlantOfPosition plant) {
+        PlantHistory plantHistory = PlantHistory.builder()
+                .plantOfPosition(plant)
+                .plantStatus(request.getCurrentStatusID())
+                .dateFrom(request.getDateFrom()).build();
+        return plantHistorySavePort.savePlantHistory(plantHistory);
+    }*/
+
+
 }
 
 

@@ -6,6 +6,10 @@ import com.fich.sarh.agent.application.ports.entrypoint.api.AgentRetrieveService
 import com.fich.sarh.agent.application.ports.persistence.AgentRetrievePort;
 import com.fich.sarh.agent.domain.model.Agent;
 import com.fich.sarh.common.UseCase;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 
 import java.util.List;
@@ -21,8 +25,9 @@ public class AgentRetrieveUseCase implements AgentRetrieveServicePort {
     }
 
     @Override
-    public List<Agent> getAllAgent() {
-        return agentRetrievePort.findAll();
+    public Page<Agent> getAllAgent(int page, int size) {
+
+        return agentRetrievePort.findAll(page, size);
     }
 
     @Override
@@ -41,5 +46,11 @@ public class AgentRetrieveUseCase implements AgentRetrieveServicePort {
     public List<Agent> fetchByLastname(String lastname) {
 
         return agentRetrievePort.findByLastname(lastname);
+    }
+
+    @Override
+    public boolean existByDocumentAgent(String document) {
+
+        return agentRetrievePort.existsByDocumentAgent(document);
     }
 }

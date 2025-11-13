@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -21,4 +22,8 @@ public interface AgentMapper {
   @Mapping(target = "documenttype", source = "documenttype")
   AgentEntity toEntity(Agent agent);
   List<Agent> toAgenList(List<AgentEntity> AgentList);
+
+  default Page<Agent> toAgentPage(Page<AgentEntity> entities){
+    return entities.map(this::toDto);
+  }
 }

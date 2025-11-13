@@ -16,6 +16,7 @@ public class OrganizationalUnitSaveUseCase implements OrganizationalUnitSaveServ
 
     @Override
     public OrganizationalUnit saveOrganizationUnit(OrganizationalUnit organizational) {
+        organizational.validateDirectors();
         return organizationalUnitSavePort.saveOrganizationalUnit(organizational);
     }
 }

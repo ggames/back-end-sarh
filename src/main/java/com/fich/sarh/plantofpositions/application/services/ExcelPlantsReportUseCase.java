@@ -3,10 +3,9 @@ package com.fich.sarh.plantofpositions.application.services;
 import com.fich.sarh.common.UseCase;
 import com.fich.sarh.plantofpositions.application.ports.entrypoint.api.ExcelPlantReportApiPort;
 import com.fich.sarh.plantofpositions.application.ports.persistence.ExcelPlantsReportSpiPort;
-import com.fich.sarh.plantofpositions.domain.model.PlantOfPosition;
-import jakarta.servlet.http.HttpServletResponse;
+import com.fich.sarh.plantofpositions.domain.model.PlantProjectionDTO;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 @UseCase
@@ -19,7 +18,8 @@ public class ExcelPlantsReportUseCase implements ExcelPlantReportApiPort {
     }
 
     @Override
-    public void createExcel(List<PlantOfPosition> plants) {
-         excelReport.createExcel(plants);
+    public ByteArrayInputStream createExcel(List<PlantProjectionDTO> plants) {
+
+        return  excelReport.createExcel(plants);
     }
 }

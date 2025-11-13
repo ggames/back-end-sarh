@@ -10,11 +10,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString                                                                                                               
 @Builder
 public class AuthResponse {
+    Long id;
     String username;
     String message;
-    String jwt;
+    String accessToken;
+    String refreshToken;
     Set<String> roles;
     boolean status;
 }

@@ -8,6 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface UserDetailsPort extends UserDetailsService {
 
     AuthResponse createUser(UserRequest request);
-
-   AuthResponse loginUser(LoginRequest authLoginRequest);
+    AuthResponse loginUser(LoginRequest authLoginRequest);
+    AuthResponse refreshToken(String refreshToken);
 }

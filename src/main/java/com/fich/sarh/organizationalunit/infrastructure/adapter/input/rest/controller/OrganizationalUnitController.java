@@ -53,11 +53,10 @@ public class OrganizationalUnitController {
 
     @PostMapping("create")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<OrganizationalUnitResponse> save(@RequestBody OrganizationalUnitRequest request){
-        return  ResponseEntity.status(HttpStatus.CREATED).body(OrganizationalUnitRestMapper.INSTANCE
-                .toOrganizationalUnitResponse(
-                        saveService.saveOrganizationUnit(OrganizationalUnitRestMapper.INSTANCE.toOrganizationalUnit(request))
-                ));
+    public ResponseEntity<?> save(@RequestBody OrganizationalUnitRequest request){
+                      OrganizationalUnit organizationalUnit = saveService.saveOrganizationUnit(
+                              OrganizationalUnitRestMapper.INSTANCE.toOrganizationalUnit(request));
+                      return ResponseEntity.ok(organizationalUnit);
     }
 
     @GetMapping("{id}")

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -28,11 +30,19 @@ public class AuthenticationController {
     @PostMapping(value = "log-in")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest userRequest){
 
-        logger.info("AUTORIZADO " );
           AuthResponse authResponse =  userDetailsService.loginUser(userRequest);
+
+        logger.info("AUTORIZADO RESPONSE " + authResponse );
 
 
         return new ResponseEntity<>( authResponse, HttpStatus.OK);
+
+    }
+
+    @PostMapping("refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody Map<String, String> request){
+        logger.info("REFRESH TOKEN " + request.get("refreshToken"));
+        return ResponseEntity.ok(userDetailsService.refreshToken(request.get("refreshToken")));
     }
 
 

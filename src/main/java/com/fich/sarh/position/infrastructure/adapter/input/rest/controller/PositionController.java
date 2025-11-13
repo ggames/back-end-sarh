@@ -83,7 +83,7 @@ public class PositionController {
     @PostMapping("create")
     @PreAuthorize("hasRole('USER')")
     public Position save(@RequestBody PositionCommand command){
-        infoLogger.info("SOLICITUD de CARGO " + command.toString());
+        infoLogger.info("SOLICITUD de CARGO " + command.getOriginPositionIds());
         return saveService.savePosition(command);
     }
 

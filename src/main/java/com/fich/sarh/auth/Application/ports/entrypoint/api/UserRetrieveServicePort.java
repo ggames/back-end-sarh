@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface UserRetrieveServicePort {
 
     Optional<UserDTO> findByUsername(String username);
+
+    byte[] getPhotoByUsername(String username);
 }

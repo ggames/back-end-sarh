@@ -10,6 +10,10 @@ import com.fich.sarh.agent.infrastructure.adapter.output.persistence.repository.
 import com.fich.sarh.common.PersistenceAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 
 import java.util.List;
@@ -54,11 +58,11 @@ public class AgentPersistenceAdapter implements AgentLoadPort, AgentSavePort, Ag
 
 
     @Override
-    public List<Agent> findAll() {
+    public Page<Agent> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
-          return  agentRepository.findAll()
-                .stream()
-                .map( mapper::toDto).collect(Collectors.toList());
+        return  AgentMapper.INSTANCE.toAgentPage(agentRepository.findAll(pageable));
+
         //return AgentMapper.INSTANCE.toAgenList(agentRepository.findAll());
     }
 
@@ -85,5 +89,11 @@ public class AgentPersistenceAdapter implements AgentLoadPort, AgentSavePort, Ag
         List<Agent> agentList = AgentMapper.INSTANCE.toAgenList(agentEntityList);
 
         return agentList;
+    }
+
+    @Override
+    public boolean existsByDocumentAgent(String document) {
+
+        return agentRepository.existsByDocument(document);
     }
 }

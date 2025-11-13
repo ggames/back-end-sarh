@@ -1,6 +1,7 @@
 package com.fich.sarh.plantofpositions.infrastructure.adapter.output.persistence.adapter;
 
 import com.fich.sarh.common.PersistenceAdapter;
+import com.fich.sarh.common.PlantStatus;
 import com.fich.sarh.common.exceptions.BusinessRuleViolationException;
 import com.fich.sarh.plantofpositions.application.ports.persistence.PlantOfPositionLoadSpiPort;
 import com.fich.sarh.plantofpositions.application.ports.persistence.PlantOfPositionRetrieveSpiPort;
@@ -39,7 +40,9 @@ public class PlantOfPositionPersistenceAdapter implements PlantOfPositionRetriev
 
     @Override
     public boolean existsByPositionAndAgent(Long positionId, Long agentId) {
-        return  plantRepository.existsPlantPositionByAgentAndPosition(positionId, agentId);
+        return  plantRepository.existsPlantPositionByAgentAndPosition(positionId, agentId,
+                PlantStatus.OCUPADO_TRANSITORIAMENTE,
+                PlantStatus.ACTIVO);
     }
 
     @Override

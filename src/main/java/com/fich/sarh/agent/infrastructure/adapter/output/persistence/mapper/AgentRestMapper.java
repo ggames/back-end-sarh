@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface AgentRestMapper {
     @Mapping(target = "documenttype", source = "documenttype")
     AgentResponse AgentToAgentResponse(Agent agent);
     List<AgentResponse> AgentListToAgentResponseList(List<Agent> AgentList);
+
+    default Page<AgentResponse> toAgentResponsePage(Page<Agent> entities){
+        return entities.map(this::AgentToAgentResponse);
+    }
 }

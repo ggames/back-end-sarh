@@ -1,5 +1,6 @@
 package com.fich.sarh.plantofpositions.infrastructure.adapter.output.persistence.repository;
 
+import com.fich.sarh.common.PlantStatus;
 import com.fich.sarh.plantofpositions.domain.model.PlantOfPosition;
 import com.fich.sarh.plantofpositions.domain.model.PlantOfPositionDto;
 import com.fich.sarh.plantofpositions.domain.model.PlantProjectionDTO;
@@ -19,10 +20,16 @@ public interface PlantOfPositionRepository extends
 
 //   @Query(value= "SELECT COUNT(pl.agentID) as countRegister FROM PlantOfPositionEntity pl LEFT JOIN pl.agentID ag LEFT JOIN pl.positionID ps ")
 
-   @Query(value = "SELECT CASE WHEN COUNT(pl.agent) > 0 THEN true ELSE false END  " +
-           "FROM PlantOfPositionEntity pl LEFT JOIN pl.agent ag " +
-           "LEFT JOIN pl.position ps WHERE ag.id = ?1 AND ps.id = ?2 AND pl.currentStatusID = 3")
-   boolean existsPlantPositionByAgentAndPosition(Long agentId, Long positionId);
+   @Query( value = """ 
+           SELECT CASE WHEN COUNT(pl) > 0 THEN true ELSE false END  
+           FROM PlantOfPositionEntity pl 
+           WHERE pl.agent.id = :agentId AND pl.position.id = :positionId 
+           AND pl.currentStatusID IN (:status1, :status2) """)
+   boolean existsPlantPositionByAgentAndPosition(
+           @Param("agentId") Long agentId,
+           @Param("positionId") Long positionId,
+           @Param("status1")PlantStatus status1,
+           @Param("status2") PlantStatus status2);
 
    @Query(value = "SELECT pl FROM PlantOfPositionEntity pl LEFT JOIN pl.agent ag " +
            "LEFT JOIN pl.position ps WHERE ag.id = ?1 AND ps.id = ?2 AND pl.currentStatusID = 3")

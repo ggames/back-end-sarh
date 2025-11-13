@@ -4,6 +4,8 @@ import com.fich.sarh.common.WebAdapter;
 import com.fich.sarh.point.application.ports.entrypoint.api.PointRetrieveServicePort;
 import com.fich.sarh.point.application.ports.entrypoint.api.PointSaveServicePort;
 import com.fich.sarh.point.application.ports.entrypoint.api.PointUpdateServicePort;
+import com.fich.sarh.point.domain.model.ParityByPosition;
+import com.fich.sarh.point.domain.model.ParityPercentage;
 import com.fich.sarh.point.infrastructure.adapter.input.rest.model.request.PointRequest;
 import com.fich.sarh.point.infrastructure.adapter.input.rest.model.response.PointResponse;
 import com.fich.sarh.point.infrastructure.adapter.output.persistence.mapper.PointRestMapper;
@@ -13,8 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @WebAdapter
 @RestController
@@ -47,6 +47,18 @@ public class PointController {
                          PointRestMapper.INSTANCE.PointRequestToPoint(request)
                  ))
         );
+    }
+
+    @PostMapping("parity")
+    @PreAuthorize("hasRole('USER')")
+    public void updatePoint(@RequestBody ParityPercentage parity) {
+        pointUpdateServicePort.applyGlobalParity(parity.getPercentage());
+    }
+
+    @PutMapping("parity/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public void updatePointByType(@PathVariable Long id, @RequestBody ParityByPosition parity){
+        pointUpdateServicePort.applyParityByPositionType(id, parity.getAmountPositionNew());
     }
 
     @GetMapping("{id}")

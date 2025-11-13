@@ -22,17 +22,21 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Email
-    @NotBlank
-    @Size(max = 80)
+
     String email;
     @NotBlank
     @Size(max = 30)
+    @Column(unique = true)
     String username;
+
+    @Column(name = "profile_photo")
+    String profilePicturePath;
+
     @NotBlank
     String password;
 
     @Column(name = "is_enabled")
+
     boolean isEnabled;
 
     @Column(name = "account_No_Expired")
@@ -45,7 +49,7 @@ public class UserEntity {
     boolean credentialNonExpired;
 
 
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = RoleEntity.class, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = RoleEntity.class)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<RoleEntity> roles;
 }

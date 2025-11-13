@@ -1,5 +1,6 @@
 package com.fich.sarh.plantofpositions.application.services;
 
+import com.fich.sarh.common.exceptions.BusinessRuleViolationException;
 import com.fich.sarh.planthistory.application.ports.entrypoint.api.PlantHistoryUpdateServicePort;
 import com.fich.sarh.planthistory.application.ports.persistence.PlantHistoryRetrievePort;
 import com.fich.sarh.planthistory.application.ports.persistence.PlantHistorySavePort;
@@ -45,42 +46,29 @@ public class PlantOfPositionUpdateUseCase implements PlantOfPositionUpdateApiPor
     @Override
     public PlantOfPosition updatePlantOfPosition(Long id, PlantOfPositionRequest command) {
 
-        logger.info("UPDATE PLANTA");
-        Optional<PlantOfPosition> plantOfPosition = retrievePort.findById(id);
 
-        if (!plantOfPosition.isPresent()) {
-            throw new RuntimeException("No existe el cargo seleccionado");
-        }
+        PlantOfPosition plantOfPosition = retrievePort.findById(id).orElseThrow(()->
+                           new BusinessRuleViolationException("No existe la planta de cargo"));
 
-        logger.error("Registro de planta " + command);
+        plantOfPosition.setCurrentStatusID(command.getCurrentStatusID());
 
-        plantOfPosition.get().setCurrentStatusID(command.getCurrentStatusID());
+        // Actualiza EL ESTADO  DEL CARGO EN FUNCION AL ESTADO DE LA PLANTA.
+        updateRegisterPosition(plantOfPosition.getPosition(), command.getCurrentStatusID());
 
-        Position position = updateRegisterPosition(plantOfPosition.get().getPosition(), command.getCurrentStatusID());
-
-        logger.info("FECHA DESDE PLANT HISTORIA " + command.getCurrentStatusID() );
-
-        PlantHistory plantHistory = plantHistoryRetrievePort.fetchTopByPlantIdOrderHistoryIdDesc(plantOfPosition.get().getId());
-
-        logger.info("CANTIDAD DE REGISTROS");
-
-        if(plantHistory == null){
-            throw new RuntimeException("No existe el historial planta");
-        }
+        PlantHistory plantHistory = plantHistoryRetrievePort.fetchTopByPlantIdOrderHistoryIdDesc(plantOfPosition.getId());
 
 
-
-        if (command.getDateTo() != null) {
+        if (plantHistory != null && plantHistory.getDateTo() == null) {
 
             plantHistory.setDateTo(command.getDateTo());
             plantHistory.setPlantStatus(command.getCurrentStatusID());
             plantHistoryUpdatePort.updatePlantHistory(plantHistory.getId(), plantHistory);
         }
-        if (command.getDateTo() == null) {
+        if (plantHistory != null && command.getDateTo() != null) {
 
             PlantHistory plantHistoriaNew = PlantHistory.builder().plantStatus(command.getCurrentStatusID())
-                //    .historyPrev(plantHistory.get().getHistoryCurrent())
-                    .plantOfPosition(plantOfPosition.get())
+
+                    .plantOfPosition(plantOfPosition)
                     .dateFrom(command.getDateFrom())
 
                      .build();
@@ -90,12 +78,12 @@ public class PlantOfPositionUpdateUseCase implements PlantOfPositionUpdateApiPor
         }
 
 
-        return plantOfPosition.get();
+        return plantOfPosition;
 
 
     }
 
-    private Position updateRegisterPosition(Position position, PlantStatus plantStatus) {
+    private void updateRegisterPosition(Position position, PlantStatus plantStatus) {
 
         if (plantStatus.equals(PlantStatus.FINALIZADO)) {
             position.setPositionStatus(StatusOfPositions.VACANTE_DEFINITIVA);
@@ -107,7 +95,7 @@ public class PlantOfPositionUpdateUseCase implements PlantOfPositionUpdateApiPor
             position.setPositionStatus(StatusOfPositions.ACTIVO);
         }
 
-        return positionUpdateServicePort.updatePositionByOriginator(position.getId(), position);
+        positionUpdateServicePort.updatePositionByOriginator(position.getId(), position);
     }
 }
 

@@ -24,7 +24,8 @@ public interface PositionRepository extends JpaRepository<PositionEntity, Long> 
 
     @Query("""
              SELECT COUNT(p) > 0 FROM PositionEntity p  LEFT JOIN
-             p.organizationalUnitID o LEFT JOIN p.pointID po WHERE p.id = ?1 AND p.newPosition.id IS NOT NULL
+             p.organizationalUnitID o LEFT JOIN p.pointID po WHERE p.id = ?1 AND 
+             p.newPosition.id IS NOT NULL
             """)
     boolean existsByOriginPositionId(Long generatePosition);
 
@@ -32,6 +33,7 @@ public interface PositionRepository extends JpaRepository<PositionEntity, Long> 
              SELECT p.id AS id, po.namePosition AS namePosition, 
              o.nameUnit AS nameUnit,
              p.pointsAvailable AS pointsAvailable,
+             po.amountPoint as amountPoint,
              p.positionStatus AS positionStatus FROM PositionEntity p  LEFT JOIN
              p.organizationalUnitID o LEFT JOIN p.pointID po WHERE p.positionStatus IN (1 ,3) AND p.pointsAvailable > 0 
             """)
@@ -41,7 +43,8 @@ public interface PositionRepository extends JpaRepository<PositionEntity, Long> 
              SELECT p.id AS id, po.namePosition AS namePosition, 
              o.nameUnit AS nameUnit,
              p.pointsAvailable AS pointsAvailable,
-             p.positionStatus AS positionStatus FROM PositionEntity p  LEFT JOIN
+             p.positionStatus AS positionStatus, po.amountPoint AS amountPoint FROM PositionEntity p
+             LEFT JOIN
              p.organizationalUnitID o LEFT JOIN p.pointID po
             """)
     List<PositionDto> findAllPosition();

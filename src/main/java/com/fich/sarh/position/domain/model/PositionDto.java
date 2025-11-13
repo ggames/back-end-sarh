@@ -10,10 +10,10 @@ import java.util.logging.Level;
 public interface PositionDto {
 
     Long getId();
-
     String getNamePosition();
     String getNameUnit();
     Long getPointsAvailable();
+    Long getAmountPoint();
     StatusOfPositions getPositionStatus();
     String getResolutionNumber();
 

@@ -18,8 +18,12 @@ import com.fich.sarh.transformation.domain.model.Transformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @UseCase
 public class PositionSaveUseCase implements PositionSaveServicePort {
@@ -49,7 +53,7 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
     @Override
     public Position savePosition(PositionCommand command) {
 
-
+        logger.info(" LISTA DE CARGOS ORIGEN " + command.getOriginPositionIds());
         Optional<Point> pointFound = pointRetrievePort.findById(command.getPointId());
 
 
@@ -75,17 +79,20 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
                 .pointID(pointFound.get())
                 .organizationalUnitID(organizationalUnit.get())
                 .positionStatus(command.getPositionStatus())
-                .pointsAvailable(pointFound.get().getAmountPoint())
+                .pointsAvailable(100L)
                 .newPosition(null)
                 .creationResolutionID(transformation.get())
 //                .originPosition(originPositions)
                 .build();
 
-        logger.info("CARGO CREADO " + position);
+        // logger.info("CARGO CREADO " + position);
         if (!originPositions.isEmpty()) {
             List<Position> positionsCalculate = calculatePosition(originPositions, pointFound.get().getAmountPoint());
+
+            logger.info("CARGO CALCULADO " + positionsCalculate);
+
             for (Position originator : positionsCalculate) {
-                if(originator.getPositionStatus() != StatusOfPositions.SUPRIMIDO){
+                if (originator.getPositionStatus() != StatusOfPositions.SUPRIMIDO) {
                     originator.setPositionStatus(StatusOfPositions.SUPRIMIDO);
                     originator.setResolutionSuppressionID(transformation.get());
                 }
@@ -93,7 +100,7 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
                 updateServicePort.updatePositionByAvailablePoint(originator.getId(), originator);
             }
             Position positionToUpdate = positionSavePort.savePosition(position);
-            logger.info("CARGO COMPLETO " + positionToUpdate);
+            // logger.info("CARGO COMPLETO " + positionToUpdate);
             for (Position originator : positionsCalculate) {
                 originator.setNewPosition(positionToUpdate);
 
@@ -112,24 +119,50 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
 
     public List<Position> calculatePosition(List<Position> positions, Long amountPoint) {
 
-        for (Position originator : positions) {
+        if (positions == null || positions.isEmpty()) {
+            return positions;
+        }
 
-            long remainder = amountPoint - originator.getPointsAvailable();
-            amountPoint = remainder;
-            long newAvailable = Math.min(0, remainder);
 
-            originator.setPointsAvailable(newAvailable);
+        for (int i = 0; i < positions.size(); i++) {
+            Position originator = positions.get(i);
+            long itemPoints = originator.getPointID().getAmountPoint();
+            long amount_remainder = itemPoints * originator.getPointsAvailable()/100;
 
-            if (positions.indexOf(originator) == (positions.size() - 1)) {
-                newAvailable = remainder >= 0 ? Math.min(0, -remainder) : -remainder;
-                originator.setPointsAvailable(newAvailable);
+
+            long remainder = amountPoint - amount_remainder;
+
+            logger.info("CANTIDAD DE PUNTOS REMANENTES " + remainder);
+
+            if (remainder >= 0 && i == positions.size() -1) {
+
+                int percent = (int) (((double)remainder / itemPoints)* 100);
+                logger.info("ENTRO PRIMER IF" + percent);
+                originator.setPointsAvailable(-(long)percent);
+                break;
+            }
+            if(remainder >= 0 ){
+                logger.info("ENTRO SEGUNDO IF");
+                originator.setPointsAvailable(0L);
+                amountPoint = remainder;
+                continue;
             }
 
+
+                long deficit = Math.abs(remainder);
+                int percent = (int) ((double) deficit / itemPoints * 100);
+                originator.setPointsAvailable((long) percent);
+                break;
+
+
         }
+
         return positions;
-
-
     }
+
+
+}
+
 
 
     /*public Position calculatePosition(Position position) {
@@ -163,4 +196,3 @@ public class PositionSaveUseCase implements PositionSaveServicePort {
         return position;
 
     }*/
-}

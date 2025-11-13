@@ -21,6 +21,9 @@ public class UserRequest {
     private String email;
     @NotBlank
     private String username;
+
+    private String profilePicturePath;
+
     @NotBlank
     private String password;
 

@@ -5,13 +5,17 @@ import com.fich.sarh.agent.application.ports.entrypoint.api.AgentSaveServicePort
 import com.fich.sarh.agent.application.ports.entrypoint.api.AgentUpdateServicePort;
 import com.fich.sarh.agent.application.ports.entrypoint.api.AgentRetrieveServicePort;
 import com.fich.sarh.agent.application.ports.persistence.AgentSavePort;
+import com.fich.sarh.agent.domain.model.Agent;
 import com.fich.sarh.agent.infrastructure.adapter.input.rest.model.request.AgentRequest;
 import com.fich.sarh.agent.infrastructure.adapter.input.rest.model.response.AgentResponse;
 import com.fich.sarh.agent.infrastructure.adapter.output.persistence.mapper.AgentRestMapper;
 
 import com.fich.sarh.common.WebAdapter;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,10 +45,11 @@ public class AgentController {
   //  @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("all")
     @PreAuthorize("hasRole('USER')")
-    public List<AgentResponse> findAll(){
+    public Page<AgentResponse> findAll(@RequestParam(defaultValue = "0") int page,
+          @RequestParam(defaultValue = "5") int size){
 
-        return AgentRestMapper.INSTANCE
-               .AgentListToAgentResponseList(agentRetrievePort.getAllAgent());
+        return AgentRestMapper.INSTANCE.toAgentResponsePage(agentRetrievePort.getAllAgent(page, size));
+
     }
 
     @GetMapping("document/{document}")
@@ -69,11 +74,11 @@ public class AgentController {
 
     @PostMapping("create")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<AgentResponse> save(@RequestBody AgentRequest request){
+    public ResponseEntity<?> save(@RequestBody @Valid Agent request){
        return ResponseEntity.status(HttpStatus.CREATED)
-               .body(restMapper.AgentToAgentResponse(
-                       agentSavePort.saveAgent(restMapper.AgentRequestToAgent(request))
-               ));
+               .body(
+                       agentSavePort.saveAgent(request)
+               );
 
     }
 

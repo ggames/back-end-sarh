@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -30,26 +31,36 @@ public class JwtUtils {
     @Value("${jwt.user.generator}")
     private String userGenerator;
 
-    public String createToken(Authentication authentication) {
-        Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
+    @Value("${jwt.time.expiration}")
+    private Long expiration;
+    @Value("${jwt.time.refreshExpiration}")
+    private Long expiryDate;
 
-        String username = authentication.getPrincipal().toString();
+    private Algorithm getAlgoritm(){
+        return Algorithm.HMAC256(this.privateKey);
+    }
+
+    public String createToken(Authentication authentication) {
+
+        String username = extractUsernameFromAuth(authentication);
 
         String authorities = authentication.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(",")); // READ,WRITE,
+        Date now = new Date();
+        Date expiresAt = new Date(now.getTime() + this.expiration);
 
-        String jwtToken = JWT.create()
+        return JWT.create()
                 .withIssuer(this.userGenerator)
                 .withSubject(username)
                 .withClaim("authorities", authorities)
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1800000))
+                .withClaim("type", "access")
+                .withIssuedAt(now)
+                .withExpiresAt(expiresAt)
                 .withJWTId(UUID.randomUUID().toString())
-                .withNotBefore(new Date(System.currentTimeMillis()))
-                .sign(algorithm);
+                .sign(getAlgoritm());
 
-        return jwtToken;
+
     }
 
     public DecodedJWT validateToken(String token) {
@@ -57,39 +68,103 @@ public class JwtUtils {
 
         try {
 
-            Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
 
-            JWTVerifier verifier = JWT.require(algorithm)
+            JWTVerifier verifier = JWT.require(getAlgoritm())
                     .withIssuer(this.userGenerator)
+                    .withClaim("type", "access")
                     .build();
 
             DecodedJWT decodedJWT = verifier.verify(token);
 
-            logger.info("DATOS VALIDOS " + decodedJWT);
+            logger.info("DATOS VALIDOS " + decodedJWT.getSubject());
 
             return decodedJWT;
 
-        } catch (JWTVerificationException e){
+        } catch (JWTVerificationException e) {
+            logger.error("Access token inválido o expirado: {}", e.getMessage());
             throw new JWTVerificationException("Token Invalid, not Authorized");
         }
     }
 
-    public String extractUsername(DecodedJWT decodedJWT){
+    public String extractUsername(DecodedJWT decodedJWT) {
 
         return decodedJWT.getSubject().toString();
     }
 
-    public String extractAuthorities(DecodedJWT decodedJWT){
+    public String extractAuthorities(DecodedJWT decodedJWT) {
 
         return decodedJWT.getClaims().toString();
     }
 
-    public Claim getSpecificClaim(DecodedJWT decodedJWT, String claimName){
+    public Claim getSpecificClaim(DecodedJWT decodedJWT, String claimName) {
         return decodedJWT.getClaim(claimName);
     }
 
-    public Map<String, Claim> getAllClaims(DecodedJWT decodedJWT){
+    public Map<String, Claim> getAllClaims(DecodedJWT decodedJWT) {
         return decodedJWT.getClaims();
     }
+
+
+    public String createRefreshToken(Authentication authentication) {
+     //  Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
+
+        String username = this.extractUsernameFromAuth(authentication);
+        Date now = new Date();
+        Date expiresAt = new Date(now.getTime() + this.expiryDate);
+
+        return JWT.create()
+                .withIssuer(this.userGenerator)
+                .withSubject(username)
+                .withClaim("type", "refresh")
+                .withIssuedAt(now)
+                .withExpiresAt(expiresAt)
+                .withJWTId(UUID.randomUUID().toString())
+               // .withNotBefore(now)
+                .sign(getAlgoritm());
+    }
+
+    public DecodedJWT validateRefreshToken(String refreshToken){
+        try {
+
+            JWTVerifier verifier = JWT.require(getAlgoritm())
+                    .withIssuer(this.userGenerator)
+
+                    .withClaim("type", "refresh")
+                    .build();
+            DecodedJWT decodedJWT = verifier.verify(refreshToken);
+            logger.debug("Refresh token válido para usuario: {}", decodedJWT.getSubject());
+            return  decodedJWT;
+        }catch (JWTVerificationException e){
+           logger.error("Refresh token inválido o expirado: {}", e.getMessage());
+           throw new JWTVerificationException("Refresh token invalido o expirado");
+        }
+    }
+    public boolean isRefreshToken(DecodedJWT decodedJWT){
+        if(decodedJWT == null) return false;
+        Claim typeClaim = decodedJWT.getClaim("type");
+        return "refresh".equals(typeClaim.asString());
+    }
+
+    public boolean isAccessToken(DecodedJWT decodedJWT){
+        if(decodedJWT == null) return false;
+        Claim typeClaim = decodedJWT.getClaim("type");
+        return  "access".equals(typeClaim.asString());
+    }
+
+    /**
+     * Método auxiliar seguro para obtener el username del Authentication.
+     */
+    private String extractUsernameFromAuth(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
+            return userDetails.getUsername();
+        } else if (principal instanceof String username) {
+            return username;
+        } else {
+            throw new IllegalArgumentException("No se pudo extraer el username del Authentication");
+        }
+    }
+
+
 
 }

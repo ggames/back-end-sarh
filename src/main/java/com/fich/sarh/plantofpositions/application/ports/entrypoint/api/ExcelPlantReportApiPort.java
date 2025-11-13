@@ -1,13 +1,12 @@
 package com.fich.sarh.plantofpositions.application.ports.entrypoint.api;
 
-import com.fich.sarh.plantofpositions.domain.model.PlantOfPosition;
-import jakarta.servlet.http.HttpServletResponse;
+import com.fich.sarh.plantofpositions.domain.model.PlantProjectionDTO;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 public interface ExcelPlantReportApiPort {
 
-    void createExcel(List<PlantOfPosition> plants);
+    ByteArrayInputStream createExcel(List<PlantProjectionDTO> plants);
 
 }

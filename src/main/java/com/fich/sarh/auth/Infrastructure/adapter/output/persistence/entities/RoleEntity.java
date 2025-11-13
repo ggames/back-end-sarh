@@ -14,6 +14,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @Entity
+@ToString
 @Table(name = "roles")
 public class RoleEntity {
     @Id

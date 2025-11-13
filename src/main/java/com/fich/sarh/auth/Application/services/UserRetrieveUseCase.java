@@ -21,4 +21,9 @@ public class UserRetrieveUseCase implements UserRetrieveServicePort {
 
         return userRetrievePort.findByUsername(username) ;
     }
+
+    @Override
+    public byte[] getPhotoByUsername(String username) {
+        return userRetrievePort.getPhotoByUsername(username);
+    }
 }

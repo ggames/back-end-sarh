@@ -11,11 +11,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleDTO {
 
     Long id;
 
     @Enumerated(EnumType.STRING)
-    RoleEnum name;
+    RoleEnum roleEnum;
 }

@@ -31,10 +31,5 @@ public class OrganizationalUnitEntity {
     @JoinColumn(name = "vicedirector_id", nullable = true)
     AgentEntity viceDirector;
 
-   private boolean isDirectorDifferentFromVice(){
-       if(director == null || viceDirector == null){
-           return true;
-       }
-       return !director.getId().equals(viceDirector.getId());
-   }
+
 }
