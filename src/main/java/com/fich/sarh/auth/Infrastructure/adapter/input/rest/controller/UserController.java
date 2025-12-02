@@ -8,15 +8,10 @@ import com.fich.sarh.auth.Application.ports.output.persistence.UserRetrievePort;
 import com.fich.sarh.auth.Application.ports.output.persistence.UserUploadPort;
 import com.fich.sarh.auth.Domain.model.RoleDTO;
 import com.fich.sarh.auth.Domain.model.UserDTO;
-import com.fich.sarh.auth.Infrastructure.adapter.input.rest.mapper.RoleRestMapper;
-import com.fich.sarh.auth.Infrastructure.adapter.input.rest.mapper.UserRestMapper;
-import com.fich.sarh.auth.Infrastructure.adapter.input.rest.model.request.UserRequest;
-import com.fich.sarh.auth.Infrastructure.adapter.input.rest.model.response.UserResponse;
-import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.entities.RoleEnum;
+import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.entities.RoleEntity;
 import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.entities.UserEntity;
 import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.mapper.RoleMapper;
 import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.mapper.UserMapper;
-import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.entities.RoleEntity;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +52,23 @@ public class UserController {
         this.userRetrievePort = userRetrievePort;
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("all")
+    public ResponseEntity<?> fetchAllUsers() {
+        return ResponseEntity.ok().body(userRetrievePort.findAllUsers());
+    }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createUser(@Valid @RequestPart("createUser")UserDTO createUser,
                                         @RequestPart(value = "file", required = false) MultipartFile file) throws JsonProcessingException {
 
-        //ObjectMapper mapper = new ObjectMapper();
+
+        logger.info( "ROLES " + createUser);
+
+       // ObjectMapper mapper = new ObjectMapper();
+
+       // Set<RoleDTO> roles = mapper.convertValue()
 
         //UserRequest createUser = mapper.readValue(createUserJson, UserRequest.class);
 
@@ -76,10 +81,11 @@ public class UserController {
 
         Set<RoleEntity> roles_entity = RoleMapper.INSTANCE.toEntityList(roles);
 
+
         //Set<RoleEntity> roles_final = RoleRestMapper.INSTANCE.;
 
 
-        logger.info( "ROLES " + roles);
+
 
 
         //    createUser.setRoles(new HashSet<>(roles));

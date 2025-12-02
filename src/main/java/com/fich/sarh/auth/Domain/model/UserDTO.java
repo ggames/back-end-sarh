@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.Collection;
 import java.util.Set;
 
 @Getter
@@ -30,4 +31,6 @@ public class UserDTO {
     )private String password;
     private String profilePicturePath;
     private Set<RoleDTO> roles;
+
+
 }

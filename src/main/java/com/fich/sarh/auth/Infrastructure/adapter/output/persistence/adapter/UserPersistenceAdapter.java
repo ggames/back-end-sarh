@@ -18,8 +18,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @PersistenceAdapter
 public class UserPersistenceAdapter implements UserRetrievePort, UserSavePort, UserUploadPort {
@@ -33,6 +36,13 @@ public class UserPersistenceAdapter implements UserRetrievePort, UserSavePort, U
     }
 
     @Override
+    public List<UserDTO> findAllUsers() {
+        return this.userRepository.findAll().stream().map(user -> UserMapper.INSTANCE.toUserDTO(user)
+        ).collect(Collectors.toList());
+
+    }
+
+    @Override
     public Optional<UserDTO> findByUsername(String username) {
         return Optional.of(userRepository.findByUsername(username).map(
                 UserMapper.INSTANCE::toUserDTO
@@ -42,17 +52,17 @@ public class UserPersistenceAdapter implements UserRetrievePort, UserSavePort, U
     @Override
     public byte[] getPhotoByUsername(String username) {
 
-        logger.info("USUARIO A BUSCAR ... " + username );
-        UserEntity user  = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        logger.info("USUARIO A BUSCAR ... " + username);
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         String photoProfile = user.getProfilePicturePath();
         String basePath = new File(".").getPath();
 
 
-        try{
+        try {
             Path path = Paths.get(basePath, photoProfile).normalize();
-           return Files.readAllBytes(Paths.get(path.toString()));
-        }catch (IOException e) {
-             throw new RuntimeException("Error al leer la foto " + e.getMessage() );
+            return Files.readAllBytes(Paths.get(path.toString()));
+        } catch (IOException e) {
+            throw new RuntimeException("Error al leer la foto " + e.getMessage());
         }
     }
 
@@ -65,26 +75,25 @@ public class UserPersistenceAdapter implements UserRetrievePort, UserSavePort, U
     public UserDTO saveUsername(UserDTO user) {
 
 
-        return  UserMapper.INSTANCE.toUserDTO(userRepository.save(UserMapper.INSTANCE.toUserEntity(user)));
+        return UserMapper.INSTANCE.toUserDTO(userRepository.save(UserMapper.INSTANCE.toUserEntity(user)));
     }
 
 
     @Override
-    public String uploadProfilePicture(MultipartFile file)
-    {
-        if(file != null && !file.isEmpty()){
+    public String uploadProfilePicture(MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
             try {
                 String uploadsDir = "uploads/profile-pictures/";
                 Path path = Paths.get(uploadsDir);
-                if(!Files.exists(path)){
+                if (!Files.exists(path)) {
                     Files.createDirectories(path);
                 }
                 String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
                 Path filepath = path.resolve(filename);
                 Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
-                this.file_path = "/"+ uploadsDir + filename;
-            } catch (IOException e){
-                 throw new RuntimeException("Error al guardar la imagen " + e);
+                this.file_path = "/" + uploadsDir + filename;
+            } catch (IOException e) {
+                throw new RuntimeException("Error al guardar la imagen " + e);
             }
         }
         return this.file_path;

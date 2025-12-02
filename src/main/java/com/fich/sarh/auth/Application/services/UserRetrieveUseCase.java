@@ -5,6 +5,7 @@ import com.fich.sarh.auth.Application.ports.output.persistence.UserRetrievePort;
 import com.fich.sarh.auth.Domain.model.UserDTO;
 import com.fich.sarh.common.UseCase;
 
+import java.util.List;
 import java.util.Optional;
 
 @UseCase
@@ -14,6 +15,11 @@ public class UserRetrieveUseCase implements UserRetrieveServicePort {
 
     public UserRetrieveUseCase(UserRetrievePort userRetrievePort) {
         this.userRetrievePort = userRetrievePort;
+    }
+
+    @Override
+    public List<UserDTO> findAllUsers() {
+        return null;
     }
 
     @Override

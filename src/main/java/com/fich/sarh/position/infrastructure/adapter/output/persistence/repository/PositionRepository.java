@@ -54,16 +54,15 @@ public interface PositionRepository extends JpaRepository<PositionEntity, Long> 
 
 
     @Query("""
-                SELECT 
-                    p.id AS id, po.namePosition AS namePosition, o.nameUnit AS nameUnit,
-                    p.pointsAvailable AS pointsAvailable, p.positionStatus AS positionStatus 
-                
+               SELECT p.id AS id, po.namePosition AS namePosition, o.nameUnit AS nameUnit,
+                p.pointsAvailable AS pointsAvailable, p.positionStatus AS positionStatus, 
+                po.amountPoint AS amountPoint
                 FROM PositionEntity p
                 LEFT JOIN p.pointID po
                 LEFT JOIN p.organizationalUnitID o
                 LEFT JOIN PlantOfPositionEntity pl ON pl.position = p
-                WHERE (pl IS NULL AND p.pointsAvailable = po.amountPoint) OR (p.positionStatus = 2)
-            """)
+                WHERE (pl IS NULL AND (p.pointsAvailable * po.amountPoint / 100) = po.amountPoint) OR (p.positionStatus = 2)
+            """)   // AND p.pointsAvailable = po.amountPoint
     List<PositionDto> findFreePosition();
 
     List<PositionEntity> findAllByIdIn(List<Long> ids);

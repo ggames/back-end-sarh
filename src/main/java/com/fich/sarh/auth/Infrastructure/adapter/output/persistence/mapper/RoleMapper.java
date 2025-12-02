@@ -7,6 +7,7 @@ import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 import javax.management.relation.Role;
+import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -19,6 +20,6 @@ public interface RoleMapper {
 
     Set<RoleEntity> toEntityList(Set<RoleDTO> roles);
 
-    Set<RoleDTO> toDtoList(Set<RoleEntity> roles);
+    List<RoleDTO> toDtoList(List<RoleEntity> roles);
 
 }

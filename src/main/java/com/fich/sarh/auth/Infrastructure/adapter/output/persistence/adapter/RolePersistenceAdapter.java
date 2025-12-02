@@ -8,6 +8,7 @@ import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.mapper.RoleM
 import com.fich.sarh.auth.Infrastructure.adapter.output.persistence.repository.RoleRepository;
 import com.fich.sarh.common.WebAdapter;
 
+import java.util.List;
 import java.util.Optional;
 
 @WebAdapter
@@ -23,5 +24,10 @@ public class RolePersistenceAdapter implements RoleRetrievePort {
     public RoleDTO  fetchByRoleEnum(RoleEnum name) {
 
         return RoleMapper.INSTANCE.toDto(this.roleRepository.findByRoleEnum(name));
+    }
+
+    @Override
+    public List<RoleDTO> fetchAllRole() {
+        return RoleMapper.INSTANCE.toDtoList(this.roleRepository.findAll());
     }
 }
