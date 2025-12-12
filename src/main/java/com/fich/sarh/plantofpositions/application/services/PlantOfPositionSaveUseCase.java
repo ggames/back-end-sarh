@@ -2,6 +2,8 @@ package com.fich.sarh.plantofpositions.application.services;
 
 import com.fich.sarh.common.CharacterPlant;
 import com.fich.sarh.common.PlantStatus;
+import com.fich.sarh.organizationalsubunit.application.ports.persistence.OrganizationalSubUnitRetrievePort;
+import com.fich.sarh.organizationalsubunit.domain.model.OrganizationalSubUnit;
 import com.fich.sarh.planthistory.application.ports.persistence.PlantHistorySavePort;
 import com.fich.sarh.planthistory.domain.model.PlantHistory;
 import com.fich.sarh.agent.application.ports.persistence.AgentRetrievePort;
@@ -16,14 +18,12 @@ import com.fich.sarh.plantofpositions.application.ports.persistence.PlantOfPosit
 import com.fich.sarh.plantofpositions.application.ports.persistence.PlantOfPositionSaveSpiPort;
 import com.fich.sarh.plantofpositions.domain.model.PlantOfPosition;
 import com.fich.sarh.plantofpositions.domain.model.PlantOfPositionCommand;
-import com.fich.sarh.plantofpositions.infrastructure.adapter.input.rest.model.request.PlantOfPositionRequest;
 import com.fich.sarh.position.application.ports.persistence.PositionRetrievePort;
 import com.fich.sarh.position.domain.model.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @UseCase
 public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
@@ -34,6 +34,8 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
     private final PositionRetrievePort positionRetrievePort;
     private final AgentRetrievePort agentRetrievePort;
     private final MovementSavePort movementSavePort;
+
+    private final OrganizationalSubUnitRetrievePort subUnitRetrievePort;
     private final PlantHistorySavePort plantHistorySavePort;
 
     private final MovementMapper mapper;
@@ -42,13 +44,14 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
                                       PositionRetrievePort positionRetrievePort,
                                       AgentRetrievePort agentRetrievePort,
                                       MovementSavePort movementSavePort,
-                                      PlantHistorySavePort plantHistorySavePort,
+                                      OrganizationalSubUnitRetrievePort subUnitRetrievePort, PlantHistorySavePort plantHistorySavePort,
                                       MovementMapper mapper) {
         this.plantRetrieve = plantRetrieve;
         this.savePort = savePort;
         this.positionRetrievePort = positionRetrievePort;
         this.agentRetrievePort = agentRetrievePort;
         this.movementSavePort = movementSavePort;
+        this.subUnitRetrievePort = subUnitRetrievePort;
         this.plantHistorySavePort = plantHistorySavePort;
         this.mapper = mapper;
     }
@@ -94,7 +97,11 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
         Agent agent = agentRetrievePort.findById(plantpositionCommand.getAgentId()).orElseThrow(() ->
                 new BusinessRuleViolationException("No existe el agente"));
 
-        PlantOfPosition plantposition = registerPlantPosition(agent, position,
+        OrganizationalSubUnit subUnit = subUnitRetrievePort
+                .findById(plantpositionCommand.getOrganizationalSubUnit())
+                .orElseThrow(()-> new BusinessRuleViolationException("No existe la materia"));
+
+        PlantOfPosition plantposition = registerPlantPosition(agent, position, subUnit,
                 plantpositionCommand.getCurrentStatusID(),
                 plantpositionCommand.getCharacterplantID());
 
@@ -108,11 +115,12 @@ public class PlantOfPositionSaveUseCase implements PlantOfPositionSaveApiPort {
         return plantposition;
     }
 
-    private PlantOfPosition registerPlantPosition(Agent agent, Position position,
+    private PlantOfPosition registerPlantPosition(Agent agent, Position position,OrganizationalSubUnit subUnit,
                                                   PlantStatus currentStatus, CharacterPlant characterPlant) {
         PlantOfPosition plant = PlantOfPosition
                 .builder().agent(agent)
                 .position(position)
+                .organizationalSubUnit(subUnit)
                 .currentStatusID(currentStatus)
                 .characterplantID(characterPlant).build();
 

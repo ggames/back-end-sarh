@@ -85,9 +85,7 @@ public class OrganizationalSubUnitController {
     @PreAuthorize("hasRole('USER')")
     public OrganizationalSubUnitResponse update(@PathVariable Long id, @RequestBody OrganizationalSubUnitRequest request){
 
-        return restMapper.toOrganizationalSubUnit(updateService.updateOrganizationSubUnit(id,
-                restMapper.toOrganizationalSubUnit(request)
-        ));
+        return restMapper.toOrganizationalSubUnit(updateService.updateOrganizationSubUnit(id,request));
     }
 
     @GetMapping("dto/all")

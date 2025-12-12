@@ -64,7 +64,6 @@ public class UserController {
                                         @RequestPart(value = "file", required = false) MultipartFile file) throws JsonProcessingException {
 
 
-        logger.info( "ROLES " + createUser);
 
        // ObjectMapper mapper = new ObjectMapper();
 
@@ -80,6 +79,10 @@ public class UserController {
                 .collect(Collectors.toSet());
 
         Set<RoleEntity> roles_entity = RoleMapper.INSTANCE.toEntityList(roles);
+
+
+        logger.info("ROLES " + roles_entity);
+
 
 
         //Set<RoleEntity> roles_final = RoleRestMapper.INSTANCE.;
@@ -105,7 +108,7 @@ public class UserController {
 
 
 
-        return  ResponseEntity.status(HttpStatus.CREATED).body(userSave.saveUsername(UserMapper.INSTANCE.toUserDTO(userEntity)));
+        return  ResponseEntity.status(HttpStatus.CREATED)                                                                                                                                                                                                                                                                                                                                                               .body(userSave.saveUsername(UserMapper.INSTANCE.toUserDTO(userEntity)));
     }
 
    /* @PreAuthorize("hasRole('USER')")

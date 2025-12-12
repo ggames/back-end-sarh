@@ -16,5 +16,5 @@ public class OrganizationalSubUnitRequest {
 
     String guaraniCode;
 
-    OrganizationalUnit organizationalUnit;
+    Long organizationalUnit;
 }

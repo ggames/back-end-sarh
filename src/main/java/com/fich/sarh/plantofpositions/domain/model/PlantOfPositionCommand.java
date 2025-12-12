@@ -21,6 +21,8 @@ public class PlantOfPositionCommand {
 
     PlantStatus currentStatusID;
 
+    Long organizationalSubUnit;
+
     LocalDate dateFrom;
 
     LocalDate dateTo;

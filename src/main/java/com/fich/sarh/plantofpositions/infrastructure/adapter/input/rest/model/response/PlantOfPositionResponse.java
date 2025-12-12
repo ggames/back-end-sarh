@@ -3,6 +3,7 @@ package com.fich.sarh.plantofpositions.infrastructure.adapter.input.rest.model.r
 import com.fich.sarh.agent.domain.model.Agent;
 import com.fich.sarh.common.CharacterPlant;
 import com.fich.sarh.common.PlantStatus;
+import com.fich.sarh.organizationalsubunit.domain.model.OrganizationalSubUnit;
 import com.fich.sarh.point.domain.model.Point;
 import com.fich.sarh.position.domain.model.Position;
 import lombok.*;
@@ -21,6 +22,8 @@ public class PlantOfPositionResponse {
     Position position;
 
     Agent agent;
+
+    OrganizationalSubUnit organizationalSubUnit;
 
     CharacterPlant characterplantID;
 
